@@ -1,0 +1,1 @@
+/share/data2/guorc/script/WGS/Virus/vs_taxAnno.v2.sh

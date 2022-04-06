@@ -1,0 +1,85 @@
+# .bashrc
+
+
+#=========================================================
+# about history
+# Avoid duplicates
+export HISTCONTROL=ignoredups:erasedups  
+# When the shell exits, append to the history file instead of overwriting it
+shopt -s histappend
+
+# After each command, append to the history file and reread it
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+
+PROMPT_COMMAND="history -a"
+#=========================================================
+alias cd1='cd /share/data1'
+alias cd2='cd /share/data2'
+alias cd3='cd /share/data3'
+alias cdp='cd /share/data1/zhangy2/project'
+alias cdw='cd /share/data1/zhangy2/'
+alias cdd='cd /share/data1/Database'
+alias cds='cd /share/data1/software'
+alias cdss='cd /share/data1/zhangy2/scripts'
+alias bio38='source activate /share/data1/software/miniconda3/envs/bio38'
+
+
+#
+alias grep='grep --color'                     # show differences in colour
+
+# Some shortcuts for different directory listings
+alias ls='ls -hF --color=always'                 # classify files in colour
+alias dir='ls --color=auto --format=vertical'
+alias vdir='ls --color=auto --format=long'
+alias ll='ls -lh'                              # long list
+alias l='ls -CF'                              #
+alias la='ls -A'                              # all but . and ..
+alias lla='ls -a -l'
+alias le='less -S'
+alias vi='/usr/bin/vim'
+alias vim='/usr/bin/vim'
+alias time='/usr/bin/time'
+alias bio27='source activate /share/data1/software/miniconda3/envs/py27'
+alias bio38='source activate /share/data1/software/miniconda3/envs/bio38'
+alias node1='ssh node1'
+alias node2='ssh node2'
+
+# other
+if [ "$TERM" = "xterm" ]
+then
+    #we're on the system console or maybe telnetting in
+    #export PS1=$path_zy
+    export PS1="\[\033]2;\h \w\007\033[33;1m\]\u@\h \033[35;1m\t\033[0m \[\033[36;1m\]\$PWD\[\033[0m\]\n\[\e[32;1m\]$ \[\e[0m\]"
+    #export PS1="\[\033]2;\h:\u \w\007\033[33;1m\]\u \033[35;1m\t\033[0m \[\033[36;1m\]\$PWD\[\033[0m\]\n\[\e[32;1m\]$ \[\e[0m\]"
+#    export PS1="\[\033]2;SunRay:\u \w\007\033[31;1m\]\u \[\033[31;1m\]\w\[\033[0m\]\n\[\e[32;1m\]$ \[\e[0m\]"
+else
+    #we're not on the console, assume an xterm
+# export PS1="\[\033[33;1m\]\h:\u \[\033[37;1m\]\w\n\$\[\033[0m\]"
+    export PS1="\[\033]2;\h \w\007\033[33;1m\]\u@\h \033[35;1m\t\033[0m \[\033[36;1m\]\$PWD\[\033[0m\]\n\[\e[32;1m\]$ \[\e[0m\]"
+  # export PS1="\e[33m\]\[\[\e[0;35m\]\u@\h \[\e[36m\]\t \[\e[33m\]\w\[\e[36m\]$\[\e[0m\]"
+fi
+
+#export LANG="en_US:zh_CN.UTF-8"
+#export LC_CTYPE="zh_CN.UTF-8"
+#export LANGUAGE="zh_CN.UTF-8"
+#export LC_ALL="zh_CN.UTF-8"
+
+export LANGUAGE=en_US.utf8
+export LANG=en_US:zh_CN.utf8
+export LC_ALL=en_US.utf8
+export PERL5LIB=/share/data1/software/PfamScan/:$PERL5LIB
+export GOPROXY=https://mirrors.aliyun.com/goproxy/
+#export ARBHOME=/share/data1/software/arb
+#export LD_LIBRARY_PATH=/share/data1/software/arb/lib:$LD_LIBRARY_PATH
+
+ascp=/home/zhangy2/.aspera/connect/bin
+tab2itol=/share/data1/software/table2itol
+pfam_scan=/share/data1/software/PfamScan
+#go=/share/data1/software/go/bin/
+sratools=/share/data2/guorc/Software/sratoolkit.2.10.9-centos_linux64/bin/
+itsx=/share/data1/software/ITSx
+conda=/share/data1/software/miniconda3/bin/
+scripts=/share/data1/zhangy2/scripts
+#arb=/share/data1/software/arb/bin
+export PATH=$PATH:$tab2itol:/home/zhangy2/bin/:$ascp:$pfam_scan:$sratools:$itsx:$conda:$scripts
+
