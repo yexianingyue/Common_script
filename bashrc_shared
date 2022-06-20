@@ -80,6 +80,7 @@ sratools=/share/data2/guorc/Software/sratoolkit.2.10.9-centos_linux64/bin/
 itsx=/share/data1/software/ITSx
 conda=/share/data1/software/miniconda3/bin/
 scripts=/share/data1/zhangy2/scripts
+Gblock=/share/data1/software/Gblocks_0.91b
 #arb=/share/data1/software/arb/bin
-export PATH=$PATH:$tab2itol:/home/zhangy2/bin/:$ascp:$pfam_scan:$sratools:$itsx:$conda:$scripts
+export PATH=$PATH:$tab2itol:/home/zhangy2/bin/:$ascp:$pfam_scan:$sratools:$itsx:$conda:$scripts:$Gblock
 

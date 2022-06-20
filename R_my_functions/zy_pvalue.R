@@ -1,3 +1,5 @@
+library(dplyr)
+
 zy_pvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA){
     # ID -> ID columns name
     # gorup -> how to group data
@@ -7,11 +9,11 @@ zy_pvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA){
     grps = unique(sample_map[,group])
     com = t(combn(grps,2))
     nspecies = nrow(dt)
-    names = rownames(dt)
+    names_ = rownames(dt)
     # Avg -> 平均数
     # Avg.weighted.g1 -> 这个分组的加权平均数
-    result = matrix(NA,nrow = nrow(com)*nspecies, ncol = 11,
-                    dimnames = list(NULL,c("name","g1","g2","Avg.g1","Avg.g2","Avg.weighted.g1","Avg.weighted.g2","all.avg","pvalue","count1","count2")))
+    result = data.frame(matrix(NA,nrow = nrow(com)*nspecies, ncol = 14,
+                    dimnames = list(NULL,c("name","g1","g2","Avg.g1","Avg.g2","fold_change","enriched","Avg.weighted.g1","Avg.weighted.g2","all.avg","all.var","pvalue","count1","count2"))))
     nr = 1
     for (n in 1:nspecies){
         temp_dt = dt[n,]
@@ -29,11 +31,33 @@ zy_pvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA){
             ag1 = sum(dt1)/c1
             ag2 = sum(dt2)/c2
             am = mean(c(dt1,dt2))
+            a_var=var(c(dt1,dt2))
             p = wilcox.test(dt1,dt2)$p.value
-            result[nr,] = c(names[n], g1, g2, m1, m2, ag1, ag2, am, p, c1, c2)
+            fold_change = ifelse(m1>m2, m1/m2, m2/m1)
+            enriched = ifelse(m1>m2, g1,g2)
+            result[nr,] = c(names_[n], g1, g2, m1, m2, fold_change, enriched, ag1, ag2, am,a_var, p, c1, c2)
             #data.frame(name = names[n],g1=g1, g2=g2,mean1 = m1, mean2=m2,pvalue=p, count1=c1, count2= c2)
             nr = nr+1
         }
     }
     result
+}
+
+zy_qvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA,
+                     method="BH",min_count=5, min_avg=1e-5,min_fd=2){
+  # min_count 至少有一个分组有这么多样本
+  # avg 总体的平均含量阈值
+  # fd fold-change阈值
+  result <- as.data.frame(zy_pvalue(dt, sample_map, group=group, ID=ID))
+  result[,c(4:6,8:13)] = lapply(result[,c(4:6,8:13)], as.numeric)
+  result$qvalue = NA
+  # 筛选出要计算qvalue的数据
+  result1 <- result %>%
+    filter((count1 >= min_count | count2 >= min_count) & fold_change >= min_fd & all.avg >= min_avg)
+  result1$qvalue = p.adjust(result1$pvalue, method=method)
+  # 不计算qvalue的数据与计算完的qvalue数据合并
+  result2 <- result %>%
+    filter((count1 < min_count & count2 < min_count) | fold_change < min_fd | all.avg < min_avg) %>%
+    rbind(result1)
+  result2
 }

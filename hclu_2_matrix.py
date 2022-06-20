@@ -42,7 +42,6 @@ def parser_genes_num(genes, title, row_matrix, regexp):
     else:
         partern = re.compile(r"([^,]+)_\d+,")
     genes_list = partern.findall(genes)
-    #print(genes_list)
     for gene in genes_list:
         row_matrix[title[gene]] += 1
     row_matrix = [str(x) for x in row_matrix]
@@ -73,12 +72,14 @@ def main(input_file, output_file, title, regexp, format_):
     out = open(output_file, 'w')
     f = open(input_file, 'r')
     out.write("{}\t{}\n".format('familys', "\t".join(title)))
-    family = 1
+    # family = 1
     for index, line in enumerate(f):
-        genes = re.split(r"\s+", line.strip())[-1]
+        line_split = re.split(r"\s+", line.strip())
+        rep_name, genes = line_split[0], line_split[-1]
         row = parser_genes(genes, title, copy.deepcopy(init_row), regexp)
-        out.write("family_{}\t{}\n".format(family, row))
-        family += 1
+        out.write(f"{rep_name}\t{row}\n")
+        # out.write("family_{}\t{}\n".format(family, row))
+        # family += 1
     f.close()
     out.close()
 

@@ -54,18 +54,24 @@ def filter_file(input_Dir, suffix, default_value):
     global INIT_CAZY
     global STRAIN_LIST
     global STRAIN_INDEX_DICT
+    global STRAIN_LIST_LEN
 
     STRAIN_LIST = os.listdir(input_Dir)
     STRAIN_LIST = [x for x in STRAIN_LIST if re.search(f"{suffix}$", x)]
     STRAIN_LIST = [re.search(r"(.*)" + suffix, x).group(1) for x in STRAIN_LIST]
     INIT_CAZY = [default_value for _ in STRAIN_LIST]
     STRAIN_INDEX_DICT = dict(map(reversed, enumerate(STRAIN_LIST))) # {strain_1: index_1, strain_2: index_2}
+    STRAIN_LIST_LEN = len(STRAIN_LIST)
 
-def parse_file(sstr, path, strain, position, result_dict, suffix, f_title, positions):
+def parse_file(sstr, path, strain, position, result_dict, suffix, f_title, positions, n_files):
     """解析每个文件"""
     global INIT_CAZY
+    global STRAIN_LIST_LEN
+    global TERMINAL_SIZE
+
     f = open(f"{path}/{strain}{suffix}", 'r')
-    print(f"{path}/{strain}{suffix}")
+    # print(f"{path}/{strain}{suffix}")
+    sys.stdout.write(f"\rfile:{strain+suffix:{TERMINAL_SIZE}s}\t\tprocess: {n_files}/{STRAIN_LIST_LEN}")
 
     # 如果有表头，就跳过
     while(f_title > 0):
@@ -77,8 +83,9 @@ def parse_file(sstr, path, strain, position, result_dict, suffix, f_title, posit
         try:
             cazy_name, cazy_count = line_split[positions[0]-1], line_split[positions[1]-1]
         except:
-            print(line_split)
-            print(f"\033[31mthe line only have {len(line_split)} columns\033[0m, \033[1;33mplease check your parameter -n and -v \033[1m")
+            sys.stderr.write(f"\n")
+            sys.stderr.write(str(line_split))
+            sys.stderr.write(f"\n\033[31mthe line only have {len(line_split)} columns\033[0m, \033[1;33mplease check your parameter -n and -v \033[1m\n")
             exit(0)
         try:
             result_dict[cazy_name][position] = cazy_count
@@ -96,9 +103,10 @@ def main(sstr, input_Dir, output_file, suffix, f_title, position, format_functio
     judge_value = format_function(default_value)
 
     # 循环所有文件
-    for strain in STRAIN_LIST:
-        parse_file(sstr, input_Dir, strain, STRAIN_INDEX_DICT[strain], result_dict, suffix, f_title, positions)
+    for index_, strain in enumerate(STRAIN_LIST):
+        parse_file(sstr, input_Dir, strain, STRAIN_INDEX_DICT[strain], result_dict, suffix, f_title, positions, index_+1)
 
+    print("\nwrite result") # 为了掩饰前面进度条的问题
     # 写入结果
     sstr = "\t" if sstr == "\s+" else sstr
     with open(output_file, 'w') as f:
@@ -107,7 +115,7 @@ def main(sstr, input_Dir, output_file, suffix, f_title, position, format_functio
             #v_temp = [float(x) for x in v]
             v_temp = np.array([format_function(x) for x in v])
             if (v_temp == judge_value).all(): # 如果所有的值都为默认值，那就跳过
-                print(f"\033[31m{k} abundance is miss,\033[0m it will not be written to {output_file}")
+                sys.stderr.write(f"\033[31m{k} abundance is miss,\033[0m it will not be written to {output_file}\n")
                 continue
             v = sstr.join(v)
             f.write(f"{k}{sstr}{v}\n")
@@ -127,6 +135,8 @@ if __name__ == "__main__":
     INIT_CAZY = []
     STRAIN_LIST = []
     STRAIN_INDEX_DICT = {}
+    STRAIN_LIST_LEN = 0
+    TERMINAL_SIZE = int(os.get_terminal_size().columns*0.3)
 
     format_dict = {'int':int, 'float':float, 'fraction':fraction, 'str':str}
 

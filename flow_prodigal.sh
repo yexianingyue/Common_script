@@ -4,6 +4,7 @@ set -e
 
 if [ $# -lt 2 ] || [ $# -gt 4 ];then
     echo "$0 <fasta> <out_prefix> <threads> <translate_tab|11>"
+    echo "        <out_prefix>.faa/gff/ffn"
     exit 127
 fi
 in_f=$1
