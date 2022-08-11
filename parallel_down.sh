@@ -1,11 +1,7 @@
 #!/usr/bin/bash
 
-# 先利用curl -I -s 参数，获取下载文件的大小
-# 然后再利用curl -r 参数下载文件的指定字节段。这个过程就可以使用多线程进行下载
-# 缺点就是必须自己命名才行
-
 if [ $# -lt 4 ];then
-    echo "$0 <out_file> <threads> <block_size:bytes> <url>"
+    echo "$0 <out> <threads> <block_size:bytes> <url>"
     exit 127
 fi
 
@@ -20,14 +16,13 @@ fi
 
 temp_dir=${out_f}_$$  # $$ is pid of this script 
 file_size=`curl -I -s  ${url} | perl -ne 'if (/Content-Length:\s+(\d+)/){print "$1";last}'`  #获取文件的具体大小 byte
+nfiles=`cat ${temp_dir}/sp.list| wc -l`;
 
 mkdir ${temp_dir};
 perl -e 'foreach ($i=0; $i<=$ARGV[0]; $i+=$ARGV[1]){$s=$i+1; $s=0 if $i == 0; $e=$i+$ARGV[1];$e=$ARGV[0] if $e > $ARGV[0];print "$s\-$e\n"}'  ${file_size} ${size_split} > ${temp_dir}/sp.list 
-parallel -j ${threads} --joblog ${temp_dir}/parallel.log  curl -r {} -o ${temp_dir}/{\#}  ${url} :::: ${temp_dir}/sp.list ;
-
-nfiles=`cat ${temp_dir}/sp.list| wc -l`;
-# 如果上步出错，就重试10次，间隔5秒
 count_=0
+parallel -j ${threads} --joblog ${temp_dir}/parallel.log  curl -r {} -o ${temp_dir}/{\#}  ${url} :::: ${temp_dir}/sp.list ;
+# 如果上步出错，就重试10次，间隔5秒
 while [ $? -ne 0 ]
 do
     $count+=1
