@@ -2,7 +2,7 @@ library(ggplot2)
 library(reshape2)
 library(vegan)
 
-zy_positions <- function(dt=NA, top_N = 10, 
+zy_compositions <- function(dt=NA, top_N = 10, 
                                title="Composition",taxo.color = NA,width=0.9,
                                order_func = "order", order_n = 1, label_order=NA){
   # order_n -> 按照第几个丰度排序
@@ -19,7 +19,7 @@ zy_positions <- function(dt=NA, top_N = 10,
   if(nrow(dt)>=top_N){dt$taxo_temp[top_N:nrow(dt)] = 'other'} # 如果物种数大于top_N
   data = data.frame(aggregate(. ~ taxo_temp, data=dt, sum), row.names=1, check.names=F)
   data = data[order(rowMeans(data), decreasing=T),]
-  dl = melt(as.matrix(data))
+  dl = reshape2::melt(as.matrix(data))
   # 样本排序方式
   if(order_func %in% c("order","cluster","specific")){
     if (order_func == "order"){
@@ -55,7 +55,7 @@ zy_positions <- function(dt=NA, top_N = 10,
   p
 }
 
-zy_group_positions <- function(dt=NA, sample_map=NA, ID=NA, group=NA, top_N = 10, 
+zy_group_compositions <- function(dt=NA, sample_map=NA, ID=NA, group=NA, top_N = 10, 
                          title="Composition",taxo.color = NA,width=0.9,label_order=NA,
                          order_func = "order", order_n = 1){
     # order_n -> 按照第几个丰度排序
@@ -96,7 +96,7 @@ zy_group_positions <- function(dt=NA, sample_map=NA, ID=NA, group=NA, top_N = 10
       tax_ord = levels(forcats::fct_relevel(tax_ord, tax_ord[order_n]))
     }
     
-    dm = merge(dl, sample_map, by.x='Var2', by.y='Sample')
+    dm = merge(dl, sample_map, by.x='Var2', by.y=ID)
     dm$Var1 = factor(dm$Var1, level=rev(tax_ord))
     dm$Var2 = factor(dm$Var2, level=label_order)
   

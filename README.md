@@ -1,3 +1,11 @@
+# 20220811
+添加了多线程下载脚本`parallel_down.sh`
+修改了`R_functions`脚本当中的一些参数，以避免命名冲突
+```bash
+缺点就是不能自动识别名字
+parallel_down.sh <./xx> 80 1000000 "https://bcb.unl.edu/dbCAN2/download/CAZyDB.08062022.fa"
+```
+
 # 常用脚本备份
 
 ```
