@@ -16,7 +16,8 @@ kl=$4
 megahit -1 $fq1 -2 $fq2 \
 	--k-list $kl \
 	-t 40 \
-	-o $out --out-prefix $out
+	-o $out --out-prefix $out 2> $out.megahit.log
+
 if [ $? -eq 0 ];then
     rm -rf $out/intermediate_contigs/
 fi

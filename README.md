@@ -1,3 +1,11 @@
+# 20220912
+## 添加
+`tools_ncbi_parse_project.py`用于解析NCBI搜索的project页面，提取title， introduction以及文件数量的脚本
+
+# 20220819
+## 修改
+`flow_fastp_rmhost.sh`, bowtie2添加了参数`--mm`,用以任务之间共享内存
+`flow_megahit.v2.sh`, 组装日志内部直接重定向，不需要在外部指定了
 # 20220811
 添加了多线程下载脚本`parallel_down.sh`
 修改了`R_functions`脚本当中的一些参数，以避免命名冲突
