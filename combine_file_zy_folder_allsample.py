@@ -32,8 +32,8 @@ import numpy as np
 
 def get_args():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-D', metavar='if', type=str, help='Input Dir')
-    parser.add_argument('-o', metavar='of', type=str, help='Output Matrix')
+    parser.add_argument('-D', metavar='if', type=str, default="./", help='Input Dir')
+    parser.add_argument('-o', metavar='of', type=str, default="combined.profile", help='Output Matrix')
     parser.add_argument('-t', metavar='Title',type=int, default=0, choices=[0, 1], help='\033[31mwhther have tittle. [1/0:default]\033[0m')
     parser.add_argument('-n', metavar='posite',type=int, default=1, help='\033[31mWhich col is name. [1:default]\033[0m')
     parser.add_argument('-v', metavar='posite',type=int, default=2, help='\033[31mWhich col is value. [2:default]\033[0m')
@@ -62,6 +62,9 @@ def filter_file(input_Dir, suffix, default_value):
     INIT_CAZY = [default_value for _ in STRAIN_LIST]
     STRAIN_INDEX_DICT = dict(map(reversed, enumerate(STRAIN_LIST))) # {strain_1: index_1, strain_2: index_2}
     STRAIN_LIST_LEN = len(STRAIN_LIST)
+    if STRAIN_LIST_LEN == 0:
+        print(f"ERROR: {STRAIN_LIST_LEN} files are eligible for combine.")
+        exit(127)
 
 def parse_file(sstr, path, strain, position, result_dict, suffix, f_title, positions, n_files):
     """解析每个文件"""
@@ -132,11 +135,16 @@ if __name__ == "__main__":
     args = get_args()
     positions = [args.n, args.v]
 
-    INIT_CAZY = []
-    STRAIN_LIST = []
-    STRAIN_INDEX_DICT = {}
-    STRAIN_LIST_LEN = 0
-    TERMINAL_SIZE = int(os.get_terminal_size().columns*0.3)
+    INIT_CAZY = [] # 矩阵数值的默认值
+    STRAIN_LIST = []  # 文件列表
+    STRAIN_INDEX_DICT = {} # 记录每个文件的序号，矩阵填充时防止错位
+    STRAIN_LIST_LEN = 0 # 文件列表长度
+
+    # 记录终端宽度，有时候screen，貌似不能记录，所以直接赋值
+    try:
+        TERMINAL_SIZE = int(os.get_terminal_size().columns*0.3)
+    except:
+        TERMINAL_SIZE = 100
 
     format_dict = {'int':int, 'float':float, 'fraction':fraction, 'str':str}
 

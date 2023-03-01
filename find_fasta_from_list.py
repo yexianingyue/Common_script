@@ -7,9 +7,11 @@ import re
 import gzip
 from Bio import SeqIO
 
-if sys.argv.__len__() != 3:
-    print(f"{__file__} \033[31m <name list> <fasta|fasta.gz> \033[0m")
+if sys.argv.__len__() > 4 or len(sys.argv) < 3:
+    print(f"{__file__} \033[31m <name list> <fasta|fasta.gz> [-e]\033[0m")
+    print("-e: means print the list to stderr which can't find in the fasta file.")
     exit(0)
+
 q_dict = {}
 f = open(sys.argv[1],'r')
 for i in f:
@@ -26,6 +28,10 @@ for seq in SeqIO.parse(fasta, 'fasta'):
         print(">{}".format(seq.description))
         print(seq.seq)
         del q_dict[seq.id]
-if q_dict:
-    for k,v in q_dict.items():
-        sys.stderr.write(f"{k}\n")
+try:
+    sys.argv[0] == "-e"
+    if q_dict:
+        for k,v in q_dict.items():
+            sys.stderr.write(f"{k}\n")
+except:
+    sys.stderr.write(f"end.")

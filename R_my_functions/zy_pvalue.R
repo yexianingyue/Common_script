@@ -1,12 +1,12 @@
 library(dplyr)
 
-zy_pvalue = function(dt=NA, sample_map=NA, zy_group=NA, ID=NA){
+zy_pvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA){
     # ID -> ID columns name
     # gorup -> how to group data
     # dt -> profile
     # sample_map -> mapping file
     dt = dt[, sample_map[,ID]]
-    grps = unique(sample_map[,zy_group])
+    grps = unique(sample_map[,group])
     com = t(combn(grps,2))
     nspecies = nrow(dt)
     names_ = rownames(dt)
@@ -23,8 +23,8 @@ zy_pvalue = function(dt=NA, sample_map=NA, zy_group=NA, ID=NA){
         for(c in 1:nrow(com)){
             g1 = com[c,1]
             g2 = com[c,2]
-            g1s = sample_map[which(sample_map[,zy_group] == g1), ID]
-            g2s = sample_map[which(sample_map[,zy_group] == g2), ID]
+            g1s = sample_map[which(sample_map[,group] == g1), ID]
+            g2s = sample_map[which(sample_map[,group] == g2), ID]
             dt1 = as.matrix(temp_dt[,g1s])
             dt2 = as.matrix(temp_dt[,g2s])
             c1 = sum(dt1 != 0 )
@@ -39,7 +39,7 @@ zy_pvalue = function(dt=NA, sample_map=NA, zy_group=NA, ID=NA){
             fold_change = ifelse(m1>m2, m1/m2, m2/m1)
             enriched = ifelse(m1>m2, g1,g2)
             
-            m = sample_map[which(sample_map[,zy_group] %in% c(g1,g2)), ID]
+            m = sample_map[which(sample_map[,group] %in% c(g1,g2)), ID]
             all_rank = rank(temp_dt[,m])
             rank1 = all_rank[colnames(dt1)]
             rank2 = all_rank[colnames(dt2)]
@@ -54,12 +54,12 @@ zy_pvalue = function(dt=NA, sample_map=NA, zy_group=NA, ID=NA){
     result
 }
 
-zy_qvalue = function(dt=NA, sample_map=NA, zy_group=NA, ID=NA,
+zy_qvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA,
                      method="BH",min_count=0, min_avg=0,min_fd=0){
   # min_count 至少有一个分组有这么多样本
   # avg 总体的平均含量阈值
   # fd fold-change阈值
-  result <- as.data.frame(zy_pvalue(dt, sample_map, zy_group=zy_group, ID=ID))
+  result <- as.data.frame(zy_pvalue(dt, sample_map, group=group, ID=ID))
   result[,c(4:6,8:15)] = lapply(result[,c(4:6,8:15)], as.numeric)
   result$qvalue = NA
   # 筛选出要计算qvalue的数据

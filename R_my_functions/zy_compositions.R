@@ -106,7 +106,7 @@ zy_group_compositions <- function(dt=NA, sample_map=NA, ID=NA, group=NA, top_N =
         theme(panel.grid = element_blank(),
               strip.placement = "outside",
               axis.text.x = element_text(angle=90, hjust=1))+
-        facet_grid(.~get(group), scale='free',space = 'free_x'
+        facet_grid(.~eval(group), scale='free',space = 'free_x'
                    ,switch = "both" # 标签在下
                    )+
         ggtitle(label=title)+

@@ -13,7 +13,7 @@ def convert_binary(ipb:str, num):
     x = num//8 # 因为之前的ip有空格，所以这边看看越过了多少位，添加空格
     num = num + x
     temp_ipb = "11111111 11111111 11111111 11111111"
-    new_ipb = ipb[0:num+1] + temp_ipb[num:]
+    new_ipb = ipb[0:num] + temp_ipb[num:]
     ipbs = new_ipb.split(" ")
     ips = []
     for i in ipbs:
@@ -58,6 +58,8 @@ def main():
 
 if __name__ == "__main__":
     if sys.argv.__len__() > 3 or sys.argv.__len__() < 2:
+        print(f"判断ip2 是否属于ip1地址段:")
+        print(f"如:{sys.argv[0]} 10.0.0.0/24 10.255.0.1")
         print(f"{sys.argv[0]} ip1 [ip2]")
         exit(127)
     main()

@@ -21,14 +21,19 @@ calc_auc <- function(dt, pred=NA, true=NA, group=NA,acc=F,
                      boot_n=2000){
 
   roc.list = list()
-  grps = unique(dt[,group])
-  if(length(grps) == 1){
-    roc.list['AUC'] = list(roc(dt[,true], dt[,pred]))
+  if(is.na(group)){
+      roc.list['AUC'] = list( roc(dt[,true], dt[,pred]))
+      grps = "AUC"
   }else{
-    for(g in grps){
-      temp_dt = dt[dt[,group]==g,]
-      roc.list[as.character(g)] = list(  roc(temp_dt[,true], temp_dt[,pred]))
-    }
+      grps = unique(dt[,group])
+      if(length(grps) == 1){
+        roc.list['AUC'] = list(roc(dt[,true], dt[,pred]))
+      }else{
+        for(g in grps){
+          temp_dt = dt[dt[,group]==g,]
+          roc.list[as.character(g)] = list(  roc(temp_dt[,true], temp_dt[,pred]))
+        }
+      }
   }
   names_ = names(roc.list)
   result_auc = matrix(NA, ncol=6,nrow=length(grps),
@@ -65,7 +70,7 @@ plot_roc <- function(dt, pred=NA, true=NA, group=NA,
       cols=c(1:length(grps))
     }
     for(g in grps){
-      temp_dt = dt[dt[,group]==g,]
+      temp_dt = dt[dt[,group]==g,] %>% droplevels
       roc.list[as.character(g)] = list(  roc(temp_dt[,true], temp_dt[,pred]))
     }
   }

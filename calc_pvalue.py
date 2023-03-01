@@ -30,6 +30,7 @@ def calc_wilcox_pvalue(p_dt, p_map, sample="Sample", group="Group"):
 
     for n in range(0, nspecies) :
         temp_dt = p_dt.iloc[n,:] # iloc 数字索引
+        temp_dt_rank = temp_dt.rank()
         for c in com:
             g1, g2 = c
             g1s = p_map.loc[p_map.loc[:, group] == g1, sample]
@@ -41,20 +42,22 @@ def calc_wilcox_pvalue(p_dt, p_map, sample="Sample", group="Group"):
             median1 = dt1.median()
             median2 = dt2.median()
             quantile1_1 = dt1.quantile(0.25)
-            quantile2_1 = dt1.quantile(0.25)
+            quantile2_1 = dt2.quantile(0.25)
             quantile1_2 = dt1.quantile(0.75)
-            quantile2_2 = dt1.quantile(0.75)
+            quantile2_2 = dt2.quantile(0.75)
 
             # 对秩进行统计
-            rank1 = dt1.rank()
-            rank2 = dt2.rank()
+            rank1 = temp_dt_rank.loc[g1s]
+            rank2 = temp_dt_rank.loc[g2s]
             rank1_avg = rank1.mean()
             rank2_avg = rank2.mean()
             rank1_median = rank1.median()
             rank2_median = rank2.median()
 
             _, p = mannwhitneyu(dt1,dt2)
-            fold_change = m1/m2 if m1>m2 else m2/m1
+            mx = max(m1, m2)
+            mi = min(m1, m2)
+            fold_change = float("inf") if mi == 0 else mx/mi # 防止分母为0
             enriched = g1 if m1 > m2 else g2
             result.loc[index_,:] = [names_[n], g1, g2,
                                     m1, m2, median1, median2,
@@ -67,11 +70,11 @@ def calc_wilcox_pvalue(p_dt, p_map, sample="Sample", group="Group"):
 
 def get_args():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument("-d", metavar="data", type=str, help="data table file")
-    parser.add_argument("-g", metavar="group", type=str, help="sample group file")
+    parser.add_argument("-d", metavar="data", required=True, type=str, help="data table file")
+    parser.add_argument("-g", metavar="group", required=True, type=str, help="sample group file")
     parser.add_argument("-n", metavar="id", type=str, help="ID of sample")
     parser.add_argument("-G", metavar="Group", type=str, help="Group of sample")
-    parser.add_argument("-o", metavar="out", type=str, help="Output")
+    parser.add_argument("-o", metavar="out", required=True, type=str, help="Output")
     args = parser.parse_args()
     return args
 
