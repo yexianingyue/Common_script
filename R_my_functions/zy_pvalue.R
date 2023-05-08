@@ -19,7 +19,7 @@ zy_pvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA, p.method="wilcox.tes
     # sample_map -> mapping file
     test.arg = c(wilcox.test, t.test)
     names(test.arg) = c("wilcox.test", "t.test")
-    test = test.arg[p.method]
+    my_test = test.arg[[p.method]]
     dt = dt[, sample_map[,ID]]
     grps = unique(sample_map[,group])
     com = t(combn(grps,2))
@@ -27,7 +27,7 @@ zy_pvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA, p.method="wilcox.tes
     names_ = rownames(dt)
     # Avg -> 平均数
     # Avg.weighted.g1 -> 这个分组的加权平均数
-    result = data.frame(matrix(NA,nrow = nrow(com)*nspecies, ncol = 16,
+    result = data.frame(matrix(NA,nrow = nrow(com)*nspecies, ncol = 17,
                     dimnames = list(NULL,c("name","g1","g2","Avg.g1","Avg.g2","fold_change","enriched",
                                            "Avg.weighted.g1","Avg.weighted.g2","all.avg","all.var","pvalue",
                                            "count1","count2",
@@ -51,7 +51,7 @@ zy_pvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA, p.method="wilcox.tes
             am = mean(c(dt1,dt2))
             a_var=var(c(dt1,dt2))
             # p = wilcox.test(dt1,dt2)$p.value
-            p = test(dt1,dt2)$p.value
+            p = my_test(dt1,dt2)$p.value
             fold_change = ifelse(m1>m2, m1/m2, m2/m1)
             enriched = ifelse(m1>m2, g1,g2)
             

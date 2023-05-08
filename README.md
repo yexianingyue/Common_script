@@ -1,3 +1,6 @@
+#紧急修复
+`R_my_functions/zy_pvalue.R` 修复Bug
+
 # 20230508
 ## 修改
 `zy_PCoA.R` 修改了(0,0)的线类型\
