@@ -1,0 +1,207 @@
+#查看系统信息
+cat /etc/*-release
+cat /proc/version
+uname -a
+
+#useradd -m $1 -u uid
+#echo $1123 | passwd --stdin $1
+sudo mkdir $2
+sudo chown $1 $2
+sudo chgrp $1 $2
+
+
+# 用户和组
+sudo groupadd DataBase #添加用户组
+sudo usermod -a -G DataBase chenf # 给某个用户追加组，-g 是覆盖
+sudo chgrp old new # 修改目录以及文件权限
+sudo chown old new
+sudo chmod g+w Database #用户组读写权限
+sudo chmod g+s Database # 用户组开启sgid
+sudo chmod o+t Database # 可编辑修改所有的东西，但是只能删除自己创建的文件
+
+# 系统安全性
+## 用户登录认证
+pam_tally2 -u <user>  # 查看用认证失败次数
+pam_tally2 -u <user> --reset # 重置用户认证错误次数
+
+
+# 防火墙
+## 增
+sudo firewall-cmd --zone=public --add-port=33001/tcp --permanent # 添加端口   --permanent 表示永久
+sudo firewall-cmd --reload # 刷新端口
+## 查
+sudo firewall-cmd --zone=public --query-port=3306/tcp # 查询端口
+sudo firewall-cmd --list-all # 查看所有端口
+sudo firewall-cmd --zone=public --list-ports
+## 删
+sudo firewall-cmd --zone=public --remove-port=3306/tcp --permanent # 删除端口
+
+
+# rstudio-service
+# https://rstudio.com/products/rstudio/download-server/
+sudo vim /etc/rstudio/rserver.conf
+sudo rstudio-server start
+sudo rstudio-server status
+
+# jupyter notebook
+## 生成配置文件
+jupyter notebook --generate-config
+## 获取密码 ipython
+from IPython.lib import passwd # 获取sha值
+psswd()
+# 修改配置文件
+vim ~/.jupyter/jupyter_notebook_config.py 
+c.NotebookApp.open_browser = False
+c.NotebookApp.password = u'<生成的sha值>'
+# 启动
+jupyter notebook --no-browser --notebook-dir /share/data1/zhangy2/test/11.randomforest
+
+# Nginx
+sudo /usr/local/nginx/sbin/nginx # start
+sudo /usr/local/nginx/sbin/nginx -s reload
+sudo /usr/local/nginx/sbin/nginx -s quit
+## 更改配置
+sudo vim /usr/local/nginx/conf/nginx.conf
+zcat votu.fasta.gz | split - -b 50M --filter='gzip > .gz' ~/votu.part. 
+
+## nginx 配置账户密码
+sudo htpasswd -bc /usr/local/nginx/passwd.db  zhangy2 zhangy2123 # 首次创建生成密码数据库
+## 新增用户
+htpasswd -b /usr/local/nginx/passwd.db  admin  123456  
+## 改
+htpasswd  -nb    admin   123eee 
+## 删
+htpasswd -D   /usr/local/nginx/passwd.db   admin
+
+
+# 移动硬盘挂载
+sudo mount -t ntfs /dev/sdb1 /mnt2 # 如果System显示GPT，则使用/dev/sdb2  真是巨坑
+sudo umount /mnt2
+## 可以先查看硬盘的分区格式，再选择挂载方式
+lsblk -f
+
+# 分区查看
+sudo parted /dev/sda print
+
+# axel
+## 安装
+yum install epel-release
+yum install axel
+## 配置文件 /etc/axelrc
+reconnect_delay = 20
+max_speed = 500000
+num_connections = 4
+connection_timeout = 30
+buffer_size = 10240
+verbose = 1
+
+# 时间同步
+## ntpdate 安装
+yum -y install ntp ntpdate
+ntpdate 0.asia.pool.ntp.org
+## 将时间写入硬件，防止重启后时间重置
+hwclock --systohc
+
+# swap占用率很高，但是内存占用率很低
+
+## 参数定义了系统对swap的使用倾向，默认值为60，值越大表示越倾向于使用swap。可以设为0，这样做并不会禁止对swap的使用，只是最大限度地降低了使用swap的可能性。
+cat /proc/sys/vm/swappiness
+
+## 设置内存占用多少时，会积极使用swap
+sysctl vm.swappiness=10
+
+## 永久生效（重启不退回）
+vi /etc/sysctl.conf
+vm.swappiness=10
+# sysctl -p # 不明命令
+
+
+
+# nfs
+## 挂载
+mount -t nfs -o nolock,nfsvers=3,vers=3 -o proto=tcp ip:dir  dir
+## 卸载
+umount /home/mnt/files/stone
+## 常见问题
+### 检查端口看看有没有问题
+### 检查/etc/export, 把IP改一下，具体IP，然后 exportfs -arv
+sudo systemctl enable rpcbind
+sudo systemctl enable nfs
+sudo systemctl start rpcbind
+sudo systemctl start nfs
+for i in 33001 892 2049 111 2222 80  666;do sudo firewall-cmd --zone=public --add-port=$i/udp --permanent;done
+for i in 33001 892 2049 111 2222 80  666;do sudo firewall-cmd --zone=public --add-port=$i/tcp --permanent;done
+sudo firewall-cmd --reload
+
+
+
+# 任务状态提醒
+## 退出时提醒有任务在运行
+shopt -s checkjobs
+## 让任务后台可运行
+shopt -s huponexit # 不知道可行性
+
+
+
+# ssh 免密登录
+首先在两台服务器之间各自运行`ssh-keygen`,一路回车就行, 然后将A服务器的`~/.ssh/id_rsa.pub`添加到B服务器的`~/.ssh/authorized_keys`,反之亦然，如果有多台服务器，就互相添加
+然后更改文件权限为`chmod 600 ~/.ssh/authorized_keys; chmod 700 ~/.ssh`
+
+
+# 邮件
+echo "PRJNA588513.assembly.part2.fa  is done" | mail -v -s "Status:CheckV" -S "from=Zhangy2@node2.cn" yexianingyue@126.com
+
+# SRA 数据下载
+## download
+prefetch -X 40G -o SRR3993028.sra SRR3993028
+## extract
+fasterq-dump -3 -e 20 -O <out_put> <sra file>
+
+# shell
+## sed
+替换换行符
+sed ':a;N;s/\n/,/;ta'
+
+# Docker
+## 添加用户组
+usermod -aG docker user # 给用户运行权限
+
+## docker swarm # docker 集群
+for i in 2376 2377 7946;do sudo firewall-cmd --zone=public --add-port=$i/tcp --permanent;done
+for i in 7946 4789;do sudo firewall-cmd --zone=public --add-port=$i/udp --permanent;done
+
+## 启动
+system
+
+## 查看容器
+docker ps -a
+docker image ls
+## 删除容器
+docker image rm {name}
+## 激活容器 以及使用
+docker run ubuntu:18.04 /bin/echo 'Hello world' # 表示使用ubuntu环境的echo命令
+docker run -t -i ubuntu:18.04 /bin/bash  # 进入交互式界面,-t 是伪终端
+
+## 停止docker 服务
+systemctl stop docker.socket
+systemctl stop docker
+
+# 更新centos 工具
+## 使用scl可以多版本共存，如果想要直接安装，那就直接安装看看
+yum -y install centos-release-scl
+yum -y install devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils
+scl enable devtoolset-9 bash # 激活换进
+scl -l # 列出所有的环境
+
+
+# fstab
+## 使用UUID挂载系统硬盘
+blkid -s UUID
+vim /etc/fstab
+```
+UUID=xxxxxxx /share/data1 <硬盘格式：xfs/ext3/ext4/..> defaults 1 1
+```
+
+# copy
+## 进度条
+rsync --progress a b

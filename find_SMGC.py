@@ -49,7 +49,7 @@ def parse_pfam(seq_id, hmm_acc, dict_info):
     """
     添加字典键值对
     """
-    #  hmm_acc = hmm_acc.split(".")[0]
+    hmm_acc = hmm_acc.split(".")[0]
     if dict_info.get(seq_id) != None:
         dict_info[seq_id].append(hmm_acc)
     else:
@@ -61,19 +61,20 @@ def read_pfam(file):
     返回字典{seq_id: hmm_acc}
     '''
     f = open(file, 'r')
-    [f.readline() for x in range(0, 29)]
+    # [f.readline() for x in range(0, 29)]
     dict_info = {}
-    for i in f:
-        line = re.split(r"\t+", i.strip())
-        if line[3] == "Pfam":
-            seq_id = line[0]
-            hmm_acc = line[4]
-            parse_pfam(seq_id, hmm_acc, dict_info)
+    for line in f:
+        if line[0] == "#" or line.strip() == "":
+            continue
+        line_strip = re.split(r"\s+", line.strip())
+        seq_id = line_strip[0]
+        hmm_acc = line_strip[5]
+        parse_pfam(seq_id, hmm_acc, dict_info)
     return dict_info
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog='python3 depth_RPKM.py', description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(prog=f'{__file__}', description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument('i', metavar='pfam result', type=str, help='the file of pfam')
 

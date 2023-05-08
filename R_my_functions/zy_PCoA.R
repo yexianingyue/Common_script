@@ -46,8 +46,8 @@ zy_pcoa <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
                     title=title
                     )+
     theme_bw()+
-    geom_vline(xintercept=0)+
-    geom_hline(yintercept=0)+
+    geom_vline(xintercept=0, color="gray", linetype="dashed")+
+    geom_hline(yintercept=0, color="gray", linetype="dashed")+
     theme(panel.grid = element_blank(),
           text = element_text(color="black"),
           axis.text = element_text(color="black"),
@@ -115,8 +115,8 @@ zy_pcoa_with_arrow <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.col
                  color='black',alpha=1)  + 
     geom_text_repel(data=data.frame(fit_val), aes(Dim1*Change_axis, Dim2*Change_axis, label=rownames(fit_val)),
                     color='black',alpha=1)+
-    geom_hline(yintercept = 0)+
-    geom_vline(xintercept = 0)+
+    geom_hline(yintercept = 0, color="gray", linetype="dashed")+
+    geom_vline(xintercept = 0, color="gray", linetype="dashed")+
     theme_bw()+
     theme(panel.grid = element_blank(),
           text = element_text(color="black"),
@@ -175,8 +175,8 @@ zy_dbrda <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
                   title=title
   )+
     theme_bw()+
-    geom_vline(xintercept=0)+
-    geom_hline(yintercept=0)+
+    geom_vline(xintercept=0, color="gray", linetype="dashed")+
+    geom_hline(yintercept=0, color="gray", linetype="dashed")+
     theme(panel.grid = element_blank(),
           text = element_text(color="black"),
           axis.text = element_text(color="black"),
