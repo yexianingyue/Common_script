@@ -81,7 +81,7 @@ zy_qvalue = function(dt=NA, sample_map=NA, group=NA, ID=NA,p.method="wilcox.test
   # 筛选出要计算qvalue的数据
   result1 <- result %>%
     dplyr::filter((count1 >= min_count | count2 >= min_count) & fold_change >= min_fd & all.avg >= min_avg)
-  result1$qvalue = p.adjust(result1$pvalue, method=method)
+  result1$qvalue = p.adjust(result1$pvalue, method=adj.method)
   # 不计算qvalue的数据与计算完的qvalue数据合并
   result2 <- result %>%
     dplyr::filter((count1 < min_count & count2 < min_count) | fold_change < min_fd | all.avg < min_avg) %>%

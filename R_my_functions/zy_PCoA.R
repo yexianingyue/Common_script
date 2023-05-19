@@ -10,8 +10,13 @@ zy_pcoa <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
                     title="PCoA", x=1, y=2){
   
     # 对齐profile和分组的样本名称
-    dt = dt[,sample_map[,ID]]
-    
+    intersect_id = intersect(sample_map[,ID],colnames(dt))
+    if(length(intersect_id) != nrow(sample_map)){
+        message("\033[31m警告\n\tdt和sample_map有数据不匹配\033[0m")
+        message("\033[31m\t一共有",length(intersect_id),"个样本可以匹配\033[0m")
+        sample_map = sample_map[sample_map[,ID] %in% intersect_id,]
+    }
+    dt = dt[,sample_map[,ID]] %>% filter(rowSums(.) !=0)
     ## colors 
     if (is.na(sample.color) || is.nan(sample.color)){
         sample.color = c(1:length(unique(sample_map[,group])))
@@ -35,7 +40,7 @@ zy_pcoa <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
     xlab = paste("PCoA", x, " (",eigs[x],"%)", sep="")
     ylab = paste("PCoA", y, " (",eigs[y],"%)", sep="")
     title = paste(title, "\nR2=",ado_r2,"\npvalue=", ado_p, sep="")
-    
+
     dm = merge(point, sample_map, by.x='row.names', by.y=ID)
     p1 <- ggscatter(data=dm, x=paste("V",x, sep=""),y=paste("V",y, sep=""),
                     color=group,
@@ -51,8 +56,8 @@ zy_pcoa <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
     theme(panel.grid = element_blank(),
           text = element_text(color="black"),
           axis.text = element_text(color="black"),
-          axis.ticks = element_line(color="black", size=0.25),
-          panel.border = element_rect(colour="black", size=0.25))+
+          axis.ticks = element_line(color="black", linewidth=0.25),
+          panel.border = element_rect(colour="black", linewidth=0.25))+
     scale_fill_manual(values=sample.color, guide="none")+
     scale_color_manual(values=sample.color, labels=new_label)
     list(plot=p1, new_label=new_label)
@@ -64,8 +69,13 @@ zy_pcoa_with_arrow <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.col
                     title="PCoA"){
   
   # 对齐profile和分组的样本名称
+    intersect_id = intersect(sample_map[,ID],colnames(dt))
+    if(length(intersect_id) != nrow(sample_map)){
+        message("\033[31m警告\n\tdt和sample_map有数据不匹配\033[0m")
+        message("\033[31m\t一共有",length(intersect_id),"个样本可以匹配\033[0m")
+        sample_map = sample_map[sample_map[,ID] %in% intersect_id,]
+    }
   dt = dt[,sample_map[,ID]]
-  
   ## colors 
   if (is.na(sample.color)){
     sample.color = c(1:length(unique(sample_map[,group])))
@@ -121,8 +131,8 @@ zy_pcoa_with_arrow <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.col
     theme(panel.grid = element_blank(),
           text = element_text(color="black"),
           axis.text = element_text(color="black"),
-          axis.ticks = element_line(color="black", size=0.25),
-          panel.border = element_rect(colour="black", size=0.25))+
+          axis.ticks = element_line(color="black", linewidth=0.25),
+          panel.border = element_rect(colour="black", linewidth=0.25))+
     labs(x = xlab,
          y = ylab,
          title = title) 
@@ -136,8 +146,13 @@ zy_dbrda <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
                     title="dbRDA", x=1, y=2){
   
   # 对齐profile和分组的样本名称
+    intersect_id = intersect(sample_map[,ID],colnames(dt))
+    if(length(intersect_id) != nrow(sample_map)){
+        message("\033[31m警告\n\tdt和sample_map有数据不匹配\033[0m")
+        message("\033[31m\t一共有",length(intersect_id),"个样本可以匹配\033[0m")
+        sample_map = sample_map[sample_map[,ID] %in% intersect_id,]
+    }
   dt = dt[,sample_map[,ID]]
-  
   ## colors 
   if (is.na(sample.color) || is.nan(sample.color)){
     sample.color = c(1:length(unique(sample_map[,group])))
@@ -148,9 +163,10 @@ zy_dbrda <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
   
   message(paste(length(sample.color), "of groups to plot"))
   ## adonis
-  ado = adonis2(t(dt)~sample_map[,group], method = ado_method)
-  ado_r2 = round(ado$R2[1], digits = 4)
-  ado_p = ado$`Pr(>F)`[1]
+  ado = adonis(t(dt)~sample_map[,group], method = ado_method)
+  ado_r2 = round(ado$aov.tab$R2[1], digits = 4)
+  ado_p = ado$aov.tab$`Pr(>F)`[1]
+  
   
   ## dbrda
   otu.dist = vegdist(t(dt), method = pca_method)
@@ -180,8 +196,8 @@ zy_dbrda <- function(dt=NA, sample_map=NA, group=NA, ID=NA, sample.color=NA,
     theme(panel.grid = element_blank(),
           text = element_text(color="black"),
           axis.text = element_text(color="black"),
-          axis.ticks = element_line(color="black", size=0.25),
-          panel.border = element_rect(colour="black", size=0.25))+
+          axis.ticks = element_line(color="black", linewidth=0.25),
+          panel.border = element_rect(colour="black", linewidth=0.25))+
     scale_fill_manual(values=sample.color, guide="none")+
     scale_color_manual(values=sample.color, labels=new_label)
   list(plot=p1, new_label=new_label)
