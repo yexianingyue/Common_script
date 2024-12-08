@@ -1,10 +1,10 @@
 #!/share/data1/software/miniconda3/bin/python
 # -*- encoding: utf-8 -*-
-#########################################################
+##########################################################
 # Creater       :  夜下凝月
 # Created  date :  2021-01-22, 15:43:55
-# Modiffed date :  2021-11-21, 15:43:55
-#########################################################
+# Modiffed date :  2023-07-06, 16:47:06
+##########################################################
 
 '''
 combine file of each sample(must 2 line)
@@ -16,6 +16,7 @@ name_2\t456
 name_3\t789
 ...
 
+当前版本可以用于合并压缩文件.gz .bz2
 缺陷： 用于和并的表中，不要有重复的名字出现，否则我也不知道会发生什
 
 suffix: 一定要把后缀都写上。如：sample1.log   ->  .log 
@@ -23,9 +24,7 @@ suffix: 一定要把后缀都写上。如：sample1.log   ->  .log
 
 '''
 import argparse
-import sys
-import re
-import os
+import sys, gzip, re, os, bz2
 import copy
 import numpy as np
 
@@ -59,6 +58,7 @@ def filter_file(input_Dir, suffix, default_value):
     STRAIN_LIST = os.listdir(input_Dir)
     STRAIN_LIST = [x for x in STRAIN_LIST if re.search(f"{suffix}$", x)]
     STRAIN_LIST = [re.search(r"(.*)" + suffix, x).group(1) for x in STRAIN_LIST]
+    STRAIN_LIST = sorted(STRAIN_LIST)
     INIT_CAZY = [default_value for _ in STRAIN_LIST]
     STRAIN_INDEX_DICT = dict(map(reversed, enumerate(STRAIN_LIST))) # {strain_1: index_1, strain_2: index_2}
     STRAIN_LIST_LEN = len(STRAIN_LIST)
@@ -66,14 +66,23 @@ def filter_file(input_Dir, suffix, default_value):
         print(f"ERROR: {STRAIN_LIST_LEN} files are eligible for combine.")
         exit(127)
 
+def judge_file_format(file_name):
+    my_open = {'gz':gzip.open, 'bz2':bz2.open} # 输入文件格式
+    ff = file_name.split(".")[-1]
+    if my_open.get(ff):
+        return(my_open[ff])
+    return open
+
 def parse_file(sstr, path, strain, position, result_dict, suffix, f_title, positions, n_files):
     """解析每个文件"""
     global INIT_CAZY
     global STRAIN_LIST_LEN
     global TERMINAL_SIZE
+    global MY_OPEN
 
-    f = open(f"{path}/{strain}{suffix}", 'r')
-    # print(f"{path}/{strain}{suffix}")
+    rcf = f"{path}/{strain}{suffix}"
+    f = judge_file_format(rcf)(rcf, 'rt')
+
     sys.stdout.write(f"\rfile:{strain+suffix:{TERMINAL_SIZE}s}\t\tprocess: {n_files}/{STRAIN_LIST_LEN}")
 
     # 如果有表头，就跳过
@@ -112,6 +121,7 @@ def main(sstr, input_Dir, output_file, suffix, f_title, position, format_functio
     print("\nwrite result") # 为了掩饰前面进度条的问题
     # 写入结果
     sstr = "\t" if sstr == "\s+" else sstr
+    # with open(output_file, 'w') as f:
     with open(output_file, 'w') as f:
         f.write("name" + sstr + sstr.join(STRAIN_LIST) + "\n") # 表头
         for k, v in result_dict.items():
@@ -158,5 +168,4 @@ if __name__ == "__main__":
     else:
         f_title = args.t if args.t else args.skip
 
-    main(sstr, args.D, args.o, args.suffix, f_title, positions, format_function, args.a)
-
+    main(sstr, args.D, args.o, args.suffix, f_title, positions, format_function, args.a) 

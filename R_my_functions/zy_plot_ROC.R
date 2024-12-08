@@ -77,8 +77,9 @@ plot_roc <- function(dt, pred=NA, true=NA, group=NA,
   new_name_map <- map_name(roc.list)
   p <- ggroc(roc.list)+
     theme_bw()+
-    geom_abline(slope=1, intercept=1,
-                linetype="dashed",color="gray",alpha=0.7)+
+    geom_segment(data = data.frame(x = 0, y = 0),
+                aes(x = x, y = y, xend = 1, yend = 1),
+                color = "black", lty = "dashed", lwd = .4, inherit.aes = F)
     scale_color_manual(values=cols, labels=new_name_map)
   
   if(isTRUE(fill)){

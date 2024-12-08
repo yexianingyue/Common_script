@@ -3,17 +3,38 @@
 肠型的脚本\
 火山图
 
-# 20230519
-## 添加
+# new
+## 修改
+`get_sequence_from_GTF.pl` 将不再向ffn/faa里自动添加"_g/t"\
+`randomforest_impvar_parallel.R` 修复Bug\
+`combine_file_zy_folder_allsample.py` 可以支持读取`.gz`、`.bz2`两种压缩文件,其他的格式暂时不支持 \
+`find_fasta_from_list.py` 可以支持读取`.gz`、`.bz2`两种压缩文件,其他的格式暂时不支持 \
+`matrix_sum.py` 可以输入压缩文件`.gz`、`.bz2`两种压缩文件,其他的格式暂时不支持, 且不支持输出压缩(后续再改进) \
+`find_fasta_from_list.py` 每条只找一个\
+`parse_so_result.py` 修改，使用参数来控制匹配`so`结果中，是否是过滤后的信息（在`so`的结果中，第三列表示原始结果，第四列表示过滤后的结果）
+
+## 新增
+`flow_depth.sh`每条序列的平均深度\
+`tools_seq.pl` 获取序列的反向、互补、反向互补序列。可从标准输入或文件获取\
+`matrix_opt.py` 正在整合数据框\
+`tools_taxonomy2tree.py` 根据给定的层级生成nwk文件\
+`rf.py` 使用python跑随机森林，这样会快一点\
+
+## 删除
+`parse_so_result_filter.py` 可以使用`parse_so_result.py filter "(.\*).so"` 来代替
+
+
+
+## 20230519
+### 添加
 `tools_ncbi_get_fulltax.py` 用于从[taxdmp.zip](https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdmp.zip)提取特定 _taxid_ 的物种分类信息 \
 `get_sequence_from_GTF.pl` 源自["genemark_es"](http://exon.gatech.edu/GeneMark/), 经过修改后,可以对`.gz`进行读写，并且提取的序列名称会自动添加_contig_的名字，你还可以在前面再次叠加新的前缀
-## 修改
+### 修改
 `R_my_functions/zy_PCoA.R` `zy_dbrda`中之前使用了`adonis2`，现在改成了`adonis`, 针对数据不匹配的情况也做了调整 \
 `R_my_function/zy_fill_na_value.R` 可以按行或列进行修改，并且也可以设置NA的填充值, FUN现在必须给定具体的函数如`function(x){median(x, na.rm=T)}` \
 `R_my_functions/zy_pvalue.R` 针对数据不匹配的情况做了调整
-## Bug修复
+### Bug修复
 `R_my_functions/zy_pvalue.R`
-
 
 ## 20230508
 ### 修改

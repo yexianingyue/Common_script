@@ -47,7 +47,7 @@ GetProtein();
 # foreach my $k (keys %nuc){ print ("$k\n");die("debug");} # debug nuc
 # foreach my $k(@seq_order){print "$k\n";last;exit 0} # debug seq_order
 
-PrintNuc( "$ARGV[2].fna", $seq_prefix);
+PrintNuc( "$ARGV[2].ffn", $seq_prefix);
 PrintProt( "$ARGV[2].faa", $seq_prefix);
 
 #------------------------------------------------
@@ -75,7 +75,7 @@ sub ReadGTF
     next if ( /^\s+$/ );
     next if ( /^#/ );
     next if ( not /CDS/ );
-    if ( /^(\S+).*?\t\S+\t(\S+)\t(\d+)\t(\d+)\t\S+\t([\+-])\t([012.])\t.*gene_id \"(\S+)_g\"/ )
+    if ( /^(\S+).*?\t\S+\t(\S+)\t(\d+)\t(\d+)\t\S+\t([\+-])\t([012.])\t.*gene_id \"(\S+)\"/ )
     {
       $seq_id = $1;
       $type = $2;
@@ -371,7 +371,7 @@ sub PrintNuc
       }
     foreach my $i ( @seq_order )
     {
-      print OUT ">$pname$i"."_g\n"; # modiff
+      print OUT ">$pname$i\n"; # modiff
       print OUT $nuc{ $i } ."\n"
     }
     close OUT;
@@ -380,7 +380,7 @@ sub PrintNuc
   {
     foreach my $i ( @seq_order )
     {
-      print ">$pname$i"."_g\n";
+      print ">$pname$i\n";
       print $nuc{ $i } ."\n"
     }
   }
@@ -399,7 +399,7 @@ sub PrintProt
       }
     foreach my $i ( @seq_order )
     {
-      print OUT ">$pname$i"."_t\n";
+      print OUT ">$pname$i\n";
       print OUT $prot{ $i } ."\n"
     }
     close OUT;
@@ -408,7 +408,7 @@ sub PrintProt
   {
     foreach my $i ( @seq_order )
     {
-      print ">$pname$i"."_t\n";
+      print ">$pname$i\n";
       print $prot{ $i } ."\n"
     }
   }

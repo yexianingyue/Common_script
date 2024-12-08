@@ -38,7 +38,7 @@ def process():
     result_list = []
 
     for i in col_names[0:]:
-        print(f"process sample {stat}: {i}")
+        print(f"\rprocess sample {stat}: {i}\t\t", end="")
         stat+=1
         if args_len == 4 or df[i].sum() >= Min_num:
             temp = np.array(df[i])
@@ -52,7 +52,7 @@ def process():
 
     result = pd.concat(result_list, join='outer', axis=1).fillna(0).astype(int)
     result.to_csv(out_file, sep="\t")
-    print(f"min reads is {Min_num}")
+    print(f"\nmin reads is {Min_num}")
 
 if __name__ == "__main__":
         check_args()

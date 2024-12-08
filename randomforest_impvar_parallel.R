@@ -40,13 +40,14 @@ library(parallel, quietly = T)
 source("/share/data1/zhangy2/scripts/R_my_functions/zy_randomForest.R")
 zy_parallel <- function(y){
     library(randomForest, quietly = T) # 这边导入时，不会打印信息
-    randomForest(x$rf_map$Group~., data=t(x$rf_dt),ntree=999,importance=TRUE, proximity=TRUE)$importance[,2]
+    # randomForest(x$rf_map$Group~., data=t(x$rf_dt),ntree=999,importance=TRUE, proximity=TRUE)$importance[,2]
+    randomForest(x$rf_map[,gid]~., data=t(x$rf_dt),ntree=999,importance=TRUE, proximity=TRUE)$importance[,2]
 }
 
 # read file
 ######################
 message("\n\n# read profile: ", in_f)
-dt = read.table(in_f, check.names=F, row.names=1, header=T, comment.char = "")
+dt = read.table(in_f, check.names=F, row.names=1, header=T, comment.char = "", sep="\t")
 message("----------\nprofile: ", ncol(dt), "  columns\t", nrow(dt), "  features.", "\n\n")
 
 message("# read group file: ", in_g)
@@ -70,12 +71,11 @@ clusterExport(cl,c("x"))  # 导入共享数据
 
 rfs <- parLapply(cl, 1:10, zy_parallel)
 stopCluster(cl)
-species_name_map = data.frame(raw=rownames(dt), formet = make.names(rownames(dt)))
-
+species_name_map = data.frame(raw=rownames(dt), format = make.names(rownames(dt)))
 impvar_result = do.call("cbind",rfs) # 合并
 
 # 替换名字
-result = merge(species_name_map,impvar_result,by.x='raw', by.y='row.names')
+result = merge(species_name_map,impvar_result,by.x='format', by.y='row.names')
 rownames(result) = result$raw
 result = result[, c(-1,-2)]
 result = result[order(rowMeans(result), decreasing = T),]
@@ -89,3 +89,4 @@ if(!is.null(out_sorted)){
     dt = dt[rownames(result), ]
     write.table(dt, out_sorted, sep="\t", quote = F)
 }
+

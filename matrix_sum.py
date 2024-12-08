@@ -12,7 +12,7 @@ change: 分组和名字相同时，只会在最后提醒，但不会报错
 Tips:
     If names are not found in the group file, it will be classified as unknown.
 
-group: Must non header
+group:
     name_1  group_1     Group_A
     name_1  group_4     Group_B
     name_2  group_2     Group_C
@@ -27,11 +27,12 @@ matrix: Must have header
     ...     ...     ...         ...
 '''
 import  argparse
-import re
+import re,gzip,bz2
 
 def get_args():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-i", metavar="Matrix", required=True, help="Input matrix")
+    parser.add_argument("-t", metavar="Title", default=1, type=int,help="Whether have title")
     parser.add_argument("-g", metavar="group file", required=True, help="Input group")
     parser.add_argument("-N", metavar="Name col", default = 1, type=int, help="The ID's columns in group [default: 1]")
     parser.add_argument("-G", metavar="Group col", default = 2, type=int, help="The group's columns in group file [default: 2]")
@@ -44,7 +45,13 @@ def parse_group(file_, GRP, sstr, N, G):
     '''
     只是解析分组文件，{key: {taxo_1, taxo_2,...}, ...}
     '''
-    f = open(file_, 'r')
+    if re.search(".gz$", sys.argv[2]):
+        f = gzip.open(file_, 'rt')
+    elif re.search(".bz2$", sys.argv[2]):
+        f = bz2.open(file_,'rt')
+    else:
+        f = open(file_, 'r')
+
     for line in f:
         line_split = re.split(sstr, line.strip("\n"))
         if GRP.get(line_split[N]):
@@ -58,10 +65,18 @@ def parse_group(file_, GRP, sstr, N, G):
             exit(0)
     f.close()
 
-def main(file_, sstr, output_file):
+def main(file_, sstr, output_file, title):
     result = {}
-    f = open(file_, 'r')
-    tittle = f.readline()
+
+    if re.search(".gz$", sys.argv[2]):
+        f = gzip.open(file_, 'rt')
+    elif re.search(".bz2$", sys.argv[2]):
+        f = bz2.open(file_,'rt')
+    else:
+        f = open(file_, 'r')
+
+    if title:
+        tittle = f.readline()
     for line in f:
         line_split = re.split(sstr, line.strip("\n"))
         name = line_split[0]
@@ -79,7 +94,8 @@ def main(file_, sstr, output_file):
     f.close()
 
     with open(output_file, 'w', encoding="utf-8") as f:
-        f.write(tittle)
+        if title:
+            f.write(tittle)
         if sstr != "\|":
             sstr = "\t"
         for k,v in result.items():
@@ -97,6 +113,6 @@ if __name__ == "__main__":
     N = args.N - 1 
     G = args.G - 1 
     parse_group(args.g, GRP, sstr, N, G)
-    main(args.i, sstr, args.o)
+    main(args.i, sstr, args.o, args.t)
     if args.N == args.G < 0:
         print(f"\033[40;31mYour name and group is equal -> {args.G}\033[0m")
