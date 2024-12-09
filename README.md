@@ -4,7 +4,10 @@
 火山图
 
 # new
-## 修改
+
+
+## 20241208
+### 修改
 `get_sequence_from_GTF.pl` 将不再向ffn/faa里自动添加"_g/t"\
 `randomforest_impvar_parallel.R` 修复Bug\
 `combine_file_zy_folder_allsample.py` 可以支持读取`.gz`、`.bz2`两种压缩文件,其他的格式暂时不支持 \
@@ -13,14 +16,14 @@
 `find_fasta_from_list.py` 每条只找一个\
 `parse_so_result.py` 修改，使用参数来控制匹配`so`结果中，是否是过滤后的信息（在`so`的结果中，第三列表示原始结果，第四列表示过滤后的结果）
 
-## 新增
+### 新增
 `flow_depth.sh`每条序列的平均深度\
 `tools_seq.pl` 获取序列的反向、互补、反向互补序列。可从标准输入或文件获取\
 `matrix_opt.py` 正在整合数据框\
 `tools_taxonomy2tree.py` 根据给定的层级生成nwk文件\
 `rf.py` 使用python跑随机森林，这样会快一点\
 
-## 删除
+### 删除
 `parse_so_result_filter.py` 可以使用`parse_so_result.py filter "(.\*).so"` 来代替
 
 
