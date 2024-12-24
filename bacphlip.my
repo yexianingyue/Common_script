@@ -1,0 +1,118 @@
+#!/share/data1/software/miniconda3/bin/python3
+import bacphlip
+import argparse
+import gzip,bz2,zipfile,tarfile
+import logging
+import tempfile
+import os, sys
+from concurrent.futures import ProcessPoolExecutor, as_completed
+
+def get_args():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("-i", required=True, help="fasta.")
+    parser.add_argument("-o", required=True, help="output file.")
+    parser.add_argument("-t", default=10, type=int, help="Number of threads.[10]")
+    parser.add_argument("-T", help="temp_dir.(default: output.tmp)")
+    args = parser.parse_args()
+    return args
+
+
+def read_file(filename):
+    logging.info(f"read file: {filename}")
+
+    with open(filename, 'rb') as f:
+        file_start = f.read(4)
+
+    if file_start[:2] == b'\x1f\x8b':
+        return gzip.open(filename, 'rt')
+
+    elif file_start[:2] == b'BZ':
+        return bz2.open(filename, 'rt')
+
+    elif file_start[:2] == b'PK':
+        zf = zipfile.ZipFile(filename)
+        first_file = zf.namelist()[0]
+        return zf.open(first_file, 'r')
+    elif tarfile.is_tarfile(filename):
+        return tarfile.open(filename, 'r')
+
+    else:
+        return open(filename, 'r')
+
+def itera_fasta(fa_handle):
+    seqid = None
+    seq = ""
+    for line in fa_handle:
+        if line.startswith(">"):
+            name = line.strip().split(" ")[0].split(">")[1]
+            # 如果不是第一条序列
+            if seqid is not None:
+                yield (seqid, seq)
+            seqid = name
+            seq = line
+            continue
+        seq += line.strip()
+
+    if seqid is not None:
+        yield (seqid, seq)
+
+
+def process(seqid, seq, tmpdir):
+    fasta_file = os.path.join(tmpdir, f"{seqid}.fa")
+    with open(fasta_file, 'w') as f:
+        f.write(f"{seq}\n")
+    res = run_bacphlip(fasta_file)
+    return f"{seqid}\t{res}\n"
+
+def run_bacphlip(inf):
+    '''
+        因为是从临时文件来的，所以输入文件就是输出文件的路径
+    '''
+    try:
+        bacphlip.six_frame_translate(inf, f"{inf}.faa")
+        bacphlip.hmmsearch_py(f"{inf}.faa", f"{inf}.hmm")
+        bacphlip.process_hmmsearch(f"{inf}.hmm", f"{inf}.hmm.f")
+        bacphlip.predict_lifestyle( f"{inf}.hmm.f", f"{inf}.lifestyle" )
+
+        f = open(f"{inf}.lifestyle")
+        f.readline()
+        res = "\t".join(f.readline().strip().split()[1:])
+        f.close()
+
+        for f in [ inf, f"{inf}.faa", f"{inf}.hmm", f"{inf}.hmm.f", f"{inf}.lifestyle"]:
+            os.remove(f)
+        return res
+    except Exception as e:
+        logging.error(e)
+
+def main(args):
+    tmp_dir = args.T if args.T is not None else os.path.dirname(args.o)
+    fasta = read_file(args.i)
+    res = ['name\tVirulent\tTemperate\n']
+    with tempfile.TemporaryDirectory(dir=tmp_dir) as tmpdir:
+        with ProcessPoolExecutor(max_workers=args.t) as executor:
+            futures = {executor.submit(process, seqid, seq, tmpdir): seqid for seqid, seq in itera_fasta(fasta)}
+            completed_count = 0  # 完成计数器
+            for future in as_completed(futures):
+                seqid = futures[future]
+                try:
+                    result = future.result()
+                    res.append(result)
+                    completed_count += 1
+                    sys.stdout.write(f"\rprocessed: {completed_count}")
+                    sys.stdout.flush()  # 刷新输出
+                except Exception as e:
+                    logging.error(f"process: {seqid}\t{e}")
+
+        for seqid, seq in itera_fasta(fasta):
+            res.append(process(seqid, seq, tmpdir))
+    fasta.close()
+    with open(args.o, 'w') as f:
+        f.writelines(res)
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    args = get_args()
+    main(args)
+
