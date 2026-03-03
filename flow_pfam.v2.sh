@@ -41,7 +41,7 @@ if [[ $# -lt 2 ]];then
     exit 1
 fi
 
-positional = ()
+positional=()
 
 while [[ $# -gt 0 ]];do
     case $1 in
