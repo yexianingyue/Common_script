@@ -18,8 +18,9 @@ mkdir $temp_prodital
 parallel -k  -j ${threads} -a ${in_f} --block -1 \
     --pipe-part --recend '\n' --recstart '>' \
     "cat | \
-    prodigal -d $temp_prodital/{#}.ffn -o $temp_prodital/{#}.gff  -p meta -a $temp_prodital/{#}.faa -f gff -g ${translate_tab}"
-cat $temp_prodital/*.faa > $out_f.faa
-cat $temp_prodital/*.ffn > $out_f.ffn
-cat $temp_prodital/*.gff > $out_f.gff
-rm -r $temp_prodital
+    prodigal -q -d $temp_prodital/{#}.ffn -o $temp_prodital/{#}.gff  -p meta -a $temp_prodital/{#}.faa -f gff -g ${translate_tab}"
+
+cat $temp_prodital/*.faa > $out_f.faa \
+    && cat $temp_prodital/*.ffn > $out_f.ffn \
+    && cat $temp_prodital/*.gff > $out_f.gff \
+    && rm -r $temp_prodital

@@ -27,6 +27,13 @@ def get_description(soup):
     introduction = re.sub("\n"," ", introduction)
     return introduction
 
+def get_title(soup):
+    if soup.find(class_="rprt").h3:
+        title = soup.find(class_="rprt").h3
+    elif soup.find(class_="rprt").h2:
+        title = soup.find(class_="rprt").h2
+    return title.text
+
 
 def main(in_f):
 
@@ -40,7 +47,7 @@ def main(in_f):
     introduction = get_description(soup)
 
     # project 标题
-    title = soup.find(class_="rprt").h3.text
+    title = get_title(soup)
 
     # SRA experiments
     sra = soup.find(class_="FrameGrid").find(class_="smallIndent").text
@@ -50,16 +57,15 @@ def main(in_f):
 
     # SIZE
     temp_list = [ x.text for x in soup.find_all(class_='jig-ncbigrid')[-1].find_all("td")]
-    ## Gb
-    sra_size_Gb = temp_list[1]
-    ## Mb
-    sra_size_Mb = temp_list[3]
+    sra_size_unit = temp_list[0] # 单位
+    sra_size_num = temp_list[1] # 数值大小
+    sra_size = sra_size_num+" "+sra_size_unit
 
-    print(f"{project_id}\t{num_of_sra}\t{sra_size_Gb}\t{sra_size_Mb}\t{title}\t{introduction}")
+    print(f"{project_id}\t{num_of_sra}\t{sra_size}\t{title}\t{introduction}")
 
 
 if __name__ == "__main__":
     args = get_args()
     if args.t == "T":
-        print(f"project_id\tnum_of_sra\tsra_size(Gb)\tsra_size(Mb)\ttitle\tintroduction")
+        print(f"project_id\tnum_of_sra\tsra_size\ttitle\tintroduction")
     main(args.i)

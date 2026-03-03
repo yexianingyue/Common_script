@@ -1,0 +1,15 @@
+
+<<[32mmelonnpan[0m>>
+
+    version:		v.0
+    avaliable database:	test
+    conda env:		/share/data1/zhangy2/conda/envs/melonnpan
+    [31mcommon command:[0m	test
+
+    source activate /share/data1/zhangy2/conda/envs/melonnpan
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+
+

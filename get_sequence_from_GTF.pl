@@ -21,7 +21,7 @@ Usage:  <GTF>  <FASTA[.gz]> <out_prefix> [seq_name_prefix]
         在gtf中，CDS所在的行, 基因名字必须可以被 gene_id "xxx_g"匹配到
 EOF
 
-if ( scalar(@ARGV) != 3 ) { print $usage; exit(0); }
+if ( scalar(@ARGV) lt 3  or scalar(@ARGV) gt 4 ) { print $usage; exit(0); }
 
 my %genes; # {"gene_id": ['ctg_id',+/- phase start end phase1 start1 end1 phase2 start2 end2 ......], 'gene_id2': [....] }
 my %sequence;

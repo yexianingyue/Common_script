@@ -1,0 +1,17 @@
+
+<<[32mcheckv[0m>>
+
+    version:		v0.7.0
+    avaliable database:	/share/data2/guorc/Software/conda/checkv/checkv-db-v0.6/
+    [31mcommon command:[0m	/share/data2/guorc/Software/conda/checkv/bin/checkv end_to_end -d /share/data2/guorc/Software/conda/checkv/checkv-db-v0.6/ -t 80 GVD_sequences.fa  gvd_ckv >xx.log 2>&1
+
+    NOTE:
+        \e[35m1、必须使用非压缩文件，不然会出错\e[0m
+
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+    ## 1. 过滤条件
+
+

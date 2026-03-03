@@ -1,0 +1,16 @@
+
+<<[32mphylophlan-3[0m>>
+
+    version:		v.3.0.3
+    conda env:		/home/zhangy2/.conda/envs/phylophlan-3
+    database:		/share/data1/Database/phylophlan-3
+    configure:		/share/data1/software/phylophlan-3.0.3/phyphl.cfg
+
+    ----------------------------
+         << 常用命令 >>
+    ----------------------------
+    source activate /home/zhangy2/.conda/envs/phylophlan-3
+
+    phylophlan --diversity low --nproc 40 -d <db> -f <cfg>
+
+

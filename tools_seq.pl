@@ -8,13 +8,14 @@
 use warnings;
 use strict;
 my $doc = << "EOF";
-perl $0 option [input.fna]
 By default, obtained seq from stdin.
     rev  -> reverse seq
     revc -> reverse completement seq
     com  -> completement seq
 
 example:
+    perl $0 option input.fna
+    or
     echo "ATCGA" | $0 rev
 EOF
 

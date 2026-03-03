@@ -37,24 +37,22 @@ cross = as.integer(args$cross)
 
 
 library(dplyr, quietly = T)
-source("/share/data1/zhangy2/scripts/R_my_functions/zy_randomForest.R")
+source("/share/data1/zhangy2/scripts/R_my_functions/zy_randomForest.new.R")
 
 
 
-dt = read.table(in_f, sep="\t", header=T, check.names=F, row.names=1, comment.char = "")
+dt = read.table(in_f, sep="\t", header=T, check.names=F, row.names=1, comment.char = "", quote="")
 if(!is.null(nspecies)){
     # 如果给定了前N个物种，则在此处过滤
     nspecies = as.integer(nspecies)
-    dt = dt[1:nspecies, ]
+}else{
+    nspecies = nrow(dt)
 }
 
-sample_map = read.table(in_g, sep="\t", header=T, check.names = F, comment.char = "")
+sample_map = read.table(in_g, sep="\t", header=T, check.names = F, comment.char = "", quote="")
 x <- zy_format_class_name(dt, sample_map, zy_sample = sid)
 rf <- zy_RF_two_class(x$rf_dt, x$rf_map, group=gid, seed=seed, nspecies = nspecies, cross_n = cross)
 rf$seed = seed
 rf$nspecies = nspecies
-if(is.null(nspecies)){
-    rf$nspecies = nrow(dt)
-}
 
 write.table(rf, out_f, sep="\t", quote=F, row.names=F)

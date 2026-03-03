@@ -6,12 +6,18 @@ if [ $# -lt 4 ];then
     exit 0
 fi
 
+
 fq1=$1
 fq2=$2
 out=$3
 len=$4
 
-fastp  -w 4 -q 20 -u 30 -n 5 -y -Y 30  --trim_poly_g -j /dev/null -h /dev/null \
+if [ ! -f $fq1 ] || [ ! -f $fq2 ];then
+    echo " No such file or directory: $fq1 or $fq2."
+    exit 0;
+fi
+
+fastp  -w 4 -q 20 -u 30 -n 5 -y -Y 30  --trim_poly_g --trim_poly_x -j /dev/null -h /dev/null \
     -l $len \
     -o $out.1.fq.gz \
     -i $fq1 -I $fq2 \

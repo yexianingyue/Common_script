@@ -13,7 +13,7 @@ taxo_sample_to_grps <- function(sample_map=NA, group=NA,ID=NA){
   return(grps_list)
 }
 
-# 直接用院士表计算，使用pvalue表示
+# 直接用原始表计算，使用pvalue表示
 zy_raw_profile_to_volcano = function(dt=NA, sample_map=NA, group=NA, ID=NA, cutoff=10){
   # ID -> ID columns name
   # gorup -> how to group data

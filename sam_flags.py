@@ -5,17 +5,16 @@
 # Created  date :  2021-02-18, 19:14:38
 # Modiffed date :  2021-02-18, 19:14:38
 ##########################################################
-import fileinput
 import re
 import sys
 try:
-    with fileinput.input() as f:
+    with open(sys.argv[1], 'r') as f:
         for line in f:
             reads_name, reads_flags = re.split("\s+", line.strip())
             b = "reads1" if bin(int(reads_flags))[-7] == "1" else "reads2"
             print(f"{reads_name}\t{b}")
 except:
-    print(f"{sys.argv[0]} < file")
+    print(f"{sys.argv[0]} file")
     print("file:")
     print("readsname    map_flags")
     exit(0)

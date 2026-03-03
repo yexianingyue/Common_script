@@ -1,0 +1,13 @@
+
+<<[32mprefetch[0m>>
+
+    version:		v3.0.2
+    [31mcommon command:[0m	/share/data1/software/sratoolkit.3.0.2/bin/prefetch <SRA|URL> --max-size 100G --output-file <out>.sra
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+    ## 1. extract fastq from SRA file
+    /share/data1/software/sratoolkit.3.0.2/bin/fasterq-dump --split-3 --threads 80 --outdir <outdir> <input.sra>
+
+

@@ -1,4 +1,4 @@
-#!/share/data1/software/miniconda3/bin/python
+#!/usr/bin/python3
 
 # https://www.cnblogs.com/N3ptune/p/16329835.html
 

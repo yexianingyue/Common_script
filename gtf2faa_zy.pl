@@ -40,7 +40,9 @@ sub gtf2fasta {
         $_ =~ m/transcript_id \"(\S+)\"/;
         my $txid = $1;
         my @line = split(/\t/);
-        push @{$gtf{$line[0]}{$txid}}, $_;
+        # push @{$gtf{$line[0]}{$txid}}, $_;
+        $line[0] =~ /^(\S+)/; # modiff zhangy2
+        push @{$gtf{$1}{$txid}}, $_; # modiff zhangy2
     }
     }
     close (GTF) or die ("ERROR: in file " . __FILE__ ." at line ". __LINE__

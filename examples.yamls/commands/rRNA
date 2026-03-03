@@ -1,0 +1,18 @@
+
+<<[32mrRNA[0m>>
+
+    version:		v2.0.11
+    database:	/share/data2/guorc/Software/infernal-1.1.4/Rfam.v14/Rfam.rRNA.cm
+    Description:	tRNA预测工具
+
+    ----------------------------
+         << 常用命令 >>
+    ----------------------------
+    ## 1、常用命令
+    export PATH=/share/data2/guorc/Software/infernal-1.1.4/infernal-1.1.4/bin/bin:$PATH
+    cmsearch -Z 1000 --hmmonly --cut_ga --noali --tblout <out file> <database> <in fasta:nucl>
+    sed '1,3d' <out file> | awk '{print $1"\\t"$3"\\t"$4"\\ttRNA("$5")"}' | less
+
+    ## 2、建库命令[待更新]
+
+

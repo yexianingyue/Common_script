@@ -8,19 +8,32 @@
 '''
 print_id_len.py <fasta_file>  > output
 '''
-import sys
+import sys, gzip, bz2, re
 from Bio import SeqIO
 from Bio.SeqUtils import GC
 
-def all_info(file_):
+def myopen(inf):
+    if re.search(".gz$", inf):
+        fasta = gzip.open(inf, 'rt')
+    elif re.search(".bz2$", inf):
+        fasta = bz2.open(inf,'rt')
+    else:
+        fasta = open(inf, 'r')
+    return fasta
 
-    for i in SeqIO.parse(file_, 'fasta'):
-        print("{}\t{}\t{}".format(i.id, len(i.seq), GC(i.seq)))
+def all_info(file_):
+    print(f"name\tlength\tgc%\tG\tC\tA\tT")
+
+    fasta = myopen(file_)
+    for i in SeqIO.parse(fasta, 'fasta'):
+        print("{}\t{}\t{}\t{}\t{}\t{}\t{}".format(i.id, len(i.seq), GC(i.seq), i.seq.count("G"), i.seq.count("C") , i.seq.count("A") , i.seq.count("T")))
 
 def get_len():
+    fasta = myopen(sys.argv[1])
 
-    for i in SeqIO.parse(sys.argv[1], 'fasta'):
+    for i in SeqIO.parse(fasta, 'fasta'):
         print("{}\t{}".format(i.id, len(i.seq)))
+
 
 def main():
     if "-gc" in sys.argv:
@@ -30,6 +43,7 @@ def main():
             all_info(sys.argv[1])
     else:
         get_len()
+
 
 if __name__ == "__main__":
     if sys.argv.__len__() == 1 or sys.argv.__len__() > 3 :

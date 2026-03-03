@@ -9,42 +9,85 @@
 '''
 <seq_name> is the seq header  before the first spaces
 '''
+import gzip,bz2
 from Bio import SeqIO
 import re
 import argparse
 
 def cut_seq(fasta_file, name, count_limit, start, stop, count):
+    istart = start
+    istop = stop
+    start = min([istart, istop])
+    stop = max([istart, istop])
+    file_type = "file"
+    if fasta_file[-3:] == ".gz":
+        file_type = "gz"
+        fasta_file = gzip.open(fasta_file, "rt")
+    elif fasta_file[-4:] == ".bz2":
+        file_type = "bz2"
+        fasta_file = bz2.open(fasta_file, "rt")
     for seq in SeqIO.parse(fasta_file, 'fasta'):
         if seq.id == name:
             if count_limit == 0:
-                print(">{}_cut_{}:{}\tpoint={}:{}\tcut_length= {}\tseq_full_lenth= {}".format(seq.id, start, stop, start, stop, stop-start+1, len(seq.seq)))
-                print(seq.seq[start-1: stop])
+                if istart > istop:
+                    print(">{}_cut_{}:{}\treverse_complement\tpoint={}:{}\tcut_length= {}\tseq_full_lenth= {}".format(seq.id, start, stop, start, stop, stop-start+1, len(seq.seq)))
+                    print(seq.seq[start-1: stop].reverse_complement())
+                else:
+                    print(">{}_cut_{}:{}\tpoint={}:{}\tcut_length= {}\tseq_full_lenth= {}".format(seq.id, start, stop, start, stop, stop-start+1, len(seq.seq)))
+                    print(seq.seq[start-1: stop])
                 count += 1
                 if count_limit == 1:
                     exit(0)
                 continue
             elif count > count_limit and count_limit > 0:
                 exit(0)
-            print(">{}_cut_{}:{}\tpoint={}:{}\tcut_length= {}\tseq_full_lenth= {}".format(seq.id, start, stop, start, stop, stop-start+1, len(seq.seq)))
-            print(seq.seq[start-1: stop])
+            if istart > istop:
+                print(">{}_cut_{}:{}\treverse_complement\tpoint={}:{}\tcut_length= {}\tseq_full_lenth= {}".format(seq.id, start, stop, start, stop, stop-start+1, len(seq.seq)))
+                print(seq.seq[start-1: stop].reverse_complement())
+            else:
+                print(">{}_cut_{}:{}\tpoint={}:{}\tcut_length= {}\tseq_full_lenth= {}".format(seq.id, start, stop, start, stop, stop-start+1, len(seq.seq)))
+                print(seq.seq[start-1: stop])
             count += 1
+    if file_type in  ["gz", 'bz2']:
+        fasta_file.close()
 
 def full_seq(fasta_file, name, count_limit, start, count):
+    istart = start
+    istop = stop
+    start = min([istart, istop])
+    stop = max([istart, istop])
+    file_type = "file"
+    if fasta_file[-3:] == ".gz":
+        file_type = "gz"
+        fasta_file = gzip.open(fasta_file, "rt")
+    elif fasta_file[-4:] == ".bz2":
+        file_type = "bz2"
+        fasta_file = bz2.open(fasta_file, "rt")
     for seq in SeqIO.parse(fasta_file, 'fasta'):
-       if seq.id == name:
-           if count_limit == 0:
-               print(">{}\tseq_full_lenth= {}".format(seq.id, len(seq.seq)))
-               print(seq.seq)
-               count += 1
-               if count_limit == 1:
-                   print("123")
-                   exit(0)
-               continue
-           elif count > count_limit and count_limit > 0:
-               exit(0)
-           print(">{}\tseq_full_lenth= {}".format(seq.id, len(seq.seq)))
-           print(seq.seq)
-           count += 1
+        if seq.id == name:
+            if count_limit == 0:
+                if istart > istop:
+                    print(">{}\treverse_complement\tseq_full_lenth= {}".format(seq.id, len(seq.seq)))
+                    print(seq.seq[start-1: stop].reverse_complement())
+                else:
+                    print(">{}\tseq_full_lenth= {}".format(seq.id, len(seq.seq)))
+                    print(seq.seq)
+                count += 1
+                if count_limit == 1:
+                    print("123")
+                    exit(0)
+                continue
+            elif count > count_limit and count_limit > 0:
+                exit(0)
+            if istart > istop:
+                print(">{}\treverse_complete\tseq_full_lenth= {}".format(seq.id, len(seq.seq)))
+                print(seq.seq.reverse_completement())
+            else:
+                print(">{}\tseq_full_lenth= {}".format(seq.id, len(seq.seq)))
+                print(seq.seq)
+            count += 1
+    if file_type in  ["gz", 'bz2']:
+        fasta_file.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='./find_fasta.py <fasta_file>  <seq_name> [optional]',description=__doc__, formatter_class=argparse.RawTextHelpFormatter)

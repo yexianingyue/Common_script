@@ -1,7 +1,7 @@
 #!/share/data1/software/miniconda3/bin/python
 # -*- encoding: utf-8 -*-
 """
-Author:    	ZhangYue 2019年12月4日	 星期三
+Author:    	夜下凝月 2019年12月4日	 星期三
 Description:	寻找pfam/InterProscan注释结果中的次级代谢物簇
 
 =================================================================================================================
@@ -12,11 +12,14 @@ CITATION:
       Investigation of inter- and intraspecies variation through genome sequencing of Aspergillus section Nigri.
       Nat Genet 50, 1688–1695 (2018) doi:10.1038/s41588-018-0246-1
 
+=================================================================================================================
+"""
+
+"""
 [2] Medema MH, Blin K, Cimermancic P, et al.
       antiSMASH: rapid identification, annotation and analysis of secondary metabolite biosynthesis gene clusters
       in bacterial and fungal genome sequences.
       Nucleic Acids Res. 2011;39(Web Server issue):W339–W346. doi:10.1093/nar/gkr466
-=================================================================================================================
 """
 from typing import Optional
 import argparse
@@ -26,10 +29,11 @@ def taxo_pfam(hmm_acc: list) -> Optional[str]:
     '''
     根据列表中的PF，判断它属于哪个簇，返回簇名
     '''
+    hmm_acc_set = set(hmm_acc)
     # 因为杂合子是NRPS 和 PKS的并集，所以先判断这个，否则会误判为其中一个
-    if set(hmm_acc) & Hybrid == Hybrid:
+    if hmm_acc_set & Hybrid == Hybrid:
         return 'Hybrid'  
-    elif set(hmm_acc) & NRPS == NRPS:
+    elif hmm_acc_set & NRPS == NRPS:
         return 'NRPS'
     elif set(hmm_acc) & PKS == PKS:
         return 'PKS'
@@ -76,7 +80,7 @@ def read_pfam(file):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog=f'{__file__}', description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument('i', metavar='pfam result', type=str, help='the file of pfam')
+    parser.add_argument('i', metavar='<pfam result>', type=str, help='the file of pfam')
 
     args = parser.parse_args()
 

@@ -1,0 +1,20 @@
+
+<<[32mcheckm2[0m>>
+
+    version:		v.2
+    avaliable database:	/share/data1/Database/checkm2/uniref100.KO.1.dmnd
+    conda env:		/share/data1/software/miniconda3/envs/checkm2
+
+    ----------------------------
+         << 基本命令 >>
+    ----------------------------
+
+    source activate /share/data1/software/miniconda3/envs/checkm2
+
+    # 你可以给定参数-x 来指定后缀
+    checkm2 predict --quiet --threads 20 -o <output_dir> --database_path <db_file> --allmodels --input <input_dir> -x fa
+
+    ## 你也可以直接给定输入的所有文件，这样可以输入多个不同后缀的文件
+    checkm2 predict --quiet --threads 20 -o <output_dir> --database_path <db_file> --allmodels --input <input_dir/*.fa> [<input_dir2/*.fasta>] 
+
+

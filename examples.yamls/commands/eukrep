@@ -1,0 +1,15 @@
+
+<<\e[32m eukrep \e[0m>>
+
+    -------------------
+    从MAGs中识别真菌序列
+    -------------------
+
+    version:\t\tv.xxx
+    conda env:\t\tsource activate /share/data1/software/miniconda3/envs/eukrep
+    \e[31mcommon command:\e[0m\tEukRep --min 2000 -i <\e[32minput\e[0m> -o <\e[32moutput\e[0m>
+
+    -------------------
+    这个程序是修改版本，源程序不能识别压缩文件，这边添加了一下
+    -------------------
+

@@ -1,7 +1,22 @@
-( [ $# -ne 3 ] ) && echo "$0 <fasta> <out_dir> <out_prefix>" && exit 127
-inf=`realpath $1`
-outd=`realpath $2`
-pref=$3
+#!/usr/bin/bash
+
+( [ $# -ne 2 ] ) && echo "$0 <fasta> <output_file>" && exit 127
+
+inf=`realpath -s $1`
+outf=`realpath -s $2`
+
+
+if [ -f "${outf}.lock" ];then
+    echo "${outf} is running."
+    exit 127
+fi
+
+
+
+if [ -f "${outf}.ok" ];then
+    echo -e "\033[32msuccess:\033[0m\t$outf."
+    exit 0
+fi
 
 shopt -s expand_aliases
 
@@ -14,20 +29,27 @@ shopt -s expand_aliases
 database=/share/data1/Database/Pfam/releases35/
 
 
-if ( [[ $inf =~ ".gz$" ]] )
+
+touch ${outf}.lock
+
+if ( [[ $inf =~ .gz$ ]] )
 then
-    gzip -dc  $inf > ${outd}/${pref}.temp.faa
-elif ( [[ $inf =~ ".bz2$" ]] )
+    gzip -dc  $inf > ${outf}.temp.faa || ! rm ${outf}.temp.faa || exit 127
+elif ( [[ $inf =~ .bz2$ ]] )
 then
-    bunzip2 -dc $inf > ${outd}/${pref}.temp.faa
+    bunzip2 -dc $inf > ${outf}.temp.faa || ! rm ${outf}.temp.faa || exit 127
 else
-    ln -s $inf  ${outd}/${pref}.temp.faa
+    ln -s $inf  ${outf}.temp.faa
 fi
+
+[ $? -ne 0 ] && exit 127
 
 export PERL5LIB=/share/data1/software/PfamScan:/root/perl5/lib/perl5:$PERL5LIB
 
-/usr/bin/perl /share/data1/software/PfamScan/pfam_scan.pl -cpu 10 \
+/usr/bin/perl /share/data1/software/PfamScan/pfam_scan.pl \
     -dir ${database} -as  \
-    -fasta ${outd}/${pref}.temp.faa \
-    -outfile ${outd}/${pref}.pfam \
-    && rm ${outd}/${pref}.temp.faa
+    -fasta ${outf}.temp.faa \
+    -outfile ${outf} \
+    && mv ${outf}.lock ${outf}.ok \
+    && chmod 444 ${outf} \
+    && rm ${outf}.temp.faa

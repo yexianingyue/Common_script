@@ -1,0 +1,29 @@
+
+<<\e[32m tree \e[0m>>
+
+    version:		v.3.0.3
+    avaliable database:	/share/data1/Database/phylophlan-3/
+    conda env:		source activate /share/data1/zhangy2/conda/envs/phylophlan3
+
+    ----------------------------
+         << 相关命令 >>
+    ----------------------------
+
+    ## 0、注意，构建进化树时，需要添加一个外群作为参考。这个外群(outgroup)的基因组，与其他的基因组
+            外群的选择条件：
+                1、\033[32m不跨域\033[0m(做细菌的基因组的进化树时，不要选择真菌/病毒/古菌. 反之亦然)
+                2、优先选择与内群具有\033[32m最近共同祖先\033[0m的\033[32m相邻系统发育节点\033[0m
+                3、\033[37m外群基因组需与内群中\033[32m至少两个基因组\033[37m共享足够数量的同源基因，以支持可靠的比对和建树分析\033[0m
+        
+    ## 1、激活环境
+        source activate /share/data1/zhangy2/conda/envs/phylophlan3
+
+    ## 2、使用基因组的蛋白序列构建进化树
+        phylophlan \
+            -d /share/data1/Database/phylophlan-3/ \
+            -f /share/data1/software/phylophlan-3.0.3/phyphl.cfg \
+            --diversity low \
+            --accurate \
+            -i <\e[32minput_dir\e[0m>
+            -o <\e[32mout.tree\e[0m> --nproc 80 -t a --verbose 
+

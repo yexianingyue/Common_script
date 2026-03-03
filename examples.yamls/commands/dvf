@@ -1,0 +1,13 @@
+
+<<[32mdvf[0m>>
+
+    version:		v1.0
+    avaliable database:	test
+    conda env:		source activate /share/data1/software/miniconda3/envs/dvf
+    [31mcommon command:[0m	python /share/data1/lvqb/software/DeepVirFinder/dvf.py -i <in.fa> -o <out.dir> -l <minLen> -c <Threads>
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+
+

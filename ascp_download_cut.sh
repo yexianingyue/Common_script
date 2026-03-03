@@ -1,34 +1,56 @@
-#!/usr/bin/sh
-a=`find . -name "*.partial" -type f -size +800M`
-b=`find . -name "*.partial" -type f| wc -l`
-reads_num=40000000
-t=30 # threads
-while(( $b != 0  ))
-do
-    if [ -f $a  ]
-    then
-        c=`echo $a | awk -F ".gz.partial" '{print $1}'`
-        pigz -p $t -dc $a | head -n $reads_num > $c.$reads_num
-        size=`wc -l $c.$reads_num | cut -d " " -f 1`
-        if [ $size -ge $reads_num  ]
-        then
-            touch $c.gz
-            rm "$c.gz.aspera-ckpt"
-            pascp=`pgrep ascp`
-            kill -9 $pascp
-            rm $a $c.gz # 如果在处理的这段时间，文件下载完了，那就把下载好的也删了吧，反正目的已经达到了
-            echo -e "I see you \\( ^ 0 ^ )/ !!!\tand I'm compressing $c.$reads_num to $c.$reads_num.gz"
-            pigz -p $t $c.$reads_num
-            echo "rm $a or $c.gz"
-            sleep 60 # 每次删完后，会有一段时间的反应时间，所以这边可以时间放宽一点
-        else
-            echo "Waiting for a predestined partial file (~ v ~)"
-        fi
-    fi
-    echo "See you in three minutes." `date`
-    sleep 30
-    a=`find . -name "*.partial" -type f -size +800M`
-    b=`find . -name "*.partial" -type f|wc -l`
-done
+shopt -s expand_aliases
 
-echo "I've done all that (^_^). Bye" `date`
+( [ $# -ne 2 ] ) && echo "<fasp_url> <out_dir>" && exit 0;
+
+
+file_path=$1
+file=${file_path##*/}
+outd=$2
+
+( [ -f "${outd}/${file}" ] && [ ! -f "${outd}/${file}.aspx"  ] ) && exit 0;
+
+alias ascp='/share/data1/software/miniconda3/envs/aspera/bin/ascp'
+KEY='/share/data1/software/miniconda3/envs/aspera/etc/asperaweb_id_dsa.openssh'
+
+ascp -L - -P 33001 -v -Q -Tr -k 1 -l 500m -i $KEY \
+    --mode recv era-fasp@fasp.sra.ebi.ac.uk:${file_path} ${outd}/ &
+
+pid=$!
+
+echo "$pid"
+
+sleep 20;
+
+trap 'clean_tmp' SIGINT SIGTERM
+clean_tmp(){
+    kill -9 $pid
+}
+
+while [ 0 -lt 1 ]
+do
+    ( [ ! -f "${outd}/${file}.aspx" ] )  && exit 0;
+
+    fsize=`stat -c "%s" ${outd}/${file}`
+    fdate=`stat -c %Y "${outd}/${file}.aspx"` # 获取文件修改时间
+    cdate=`date +%s` # 当前时间戳
+    diff_date=`echo "( $cdate - $fdate ) / 60" | bc -l`
+
+    # 如果文件超过3分钟都没有更新，那就停止任务，开始新的
+    if [[ $diff_date > 3 ]] && [ -f "${outd}/${file}.aspx" ]
+    then
+        kill -9 $pid
+        echo $file_path | mail -s "Failed data" -r "zhangy2@download.project.id" yexianingyue@126.com;
+        sleep 20
+        $0 $file_path $outd
+        exit 127;
+    fi
+
+    # 文件大小合适后，停止任务
+    if [ $fsize -gt 1200000000 ]
+    then
+        kill -9 $pid;
+        rm ${outd}/${file}.aspx;
+        exit 0;
+    fi
+    sleep 5;
+done

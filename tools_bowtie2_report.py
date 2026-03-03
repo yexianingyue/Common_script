@@ -1,3 +1,4 @@
+#!/share/data1/software/miniconda3/bin/python3
 import re
 import sys
 patterns = {
@@ -16,38 +17,37 @@ patterns = {
         14:"(\d+) \(.*\) aligned >1 times",
         15:"(\d+)% overall alignment rate"}
  
-def parse_file(file_):
+def parse_file(file_, f_name):
     f = open(file_, 'r')
     count = 0
+    total_reads, map_rate = 0, 0
     for line in f:
-        if re.match("\s+(\d+) .* were paired; of these:"):
-            total_reads = re.match("\s+(\d+) .* were paired; of these:").group[0]
-        elif re.match("\s+(\d+) \(.*\) aligned concordantly 0 times"):
-            concordantly_0 = re.match("\s+(\d+) \(.*\) aligned concordantly 0 times").group[0]
-        elif re.match("\s+(\d+) \(.*\) aligned concordantly exactly 1 time"):
-            concordantly_1 = re.match("\s+(\d+) \(.*\) aligned concordantly exactly 1 time").group[0]
-        elif re.match("\s+(\d+) \(.*\) aligned concordantly >1 times"):
-            concordantly_lt_1 = re.match("\s+(\d+) \(.*\) aligned concordantly >1 times").group[0]
-        elif re.match("\s+(\d+) \(.*\) aligned discordantly 1 time"):
-            discordantly_1 = re.match("\s+(\d+) \(.*\) aligned discordantly 1 time").group[0]
-        elif re.match("\s+(\d+) pairs aligned 0 times concordantly or discordantly; of these:"):
-            re.match("\s+(\d+) pairs aligned 0 times concordantly or discordantly; of these:").group[0]
-        elif re.match("\s+(\d+) mates make up the pairs; of these:"):
-            re.match("\s+(\d+) mates make up the pairs; of these:").group[0]
-        elif re.match("\s+(\d+) \(.*\) aligned 0 times"):
-            re.match("\s+(\d+) \(.*\) aligned 0 times").group[0]
-        elif re.match("\s+(\d+) \(.*\) aligned exactly 1 time"):
-            re.match("\s+(\d+) \(.*\) aligned exactly 1 time").group[0]
-        elif re.match("\s+(\d+) \(.*\) aligned >1 times"):
-            re.match("\s+(\d+) \(.*\) aligned >1 times").group[0]
-        elif re.match("(\d+)% overall alignment rate"):
-            re.match("\s+(\d+) \(.*\) aligned >1 times").group[0]
+        linef = line.rstrip()
+        if re.match("\s+(\d+).*were paired; of these:", linef):
+            total_reads = re.match("\s+(\d+) .* were paired; of these:", linef).groups()[0]
+        elif re.match("\s+(\d+) \(.*\) aligned concordantly 0 times", linef):
+            concordantly_0 = re.match("\s+(\d+) \(.*\) aligned concordantly 0 times", linef).groups()[0]
+        elif re.match("\s+(\d+) \(.*\) aligned concordantly exactly 1 time", linef):
+            concordantly_1 = re.match("\s+(\d+) \(.*\) aligned concordantly exactly 1 time", linef).groups()[0]
+        elif re.match("\s+(\d+) \(.*\) aligned concordantly >1 times", linef):
+            concordantly_lt_1 = re.match("\s+(\d+) \(.*\) aligned concordantly >1 times", linef).groups()[0]
+        elif re.match("\s+(\d+) \(.*\) aligned discordantly 1 time", linef):
+            discordantly_1 = re.match("\s+(\d+) \(.*\) aligned discordantly 1 time", linef).groups()[0]
+        elif re.match("\s+(\d+) pairs aligned 0 times concordantly or discordantly; of these:", linef):
+            re.match("\s+(\d+) pairs aligned 0 times concordantly or discordantly; of these:", linef).groups()[0]
+        elif re.match("\s+(\d+) mates make up the pairs; of these:", linef):
+            re.match("\s+(\d+) mates make up the pairs; of these:", linef).groups()[0]
+        elif re.match("\s+(\d+) \(.*\) aligned 0 times", linef):
+            re.match("\s+(\d+) \(.*\) aligned 0 times", linef).groups()[0]
+        elif re.match("\s+(\d+) \(.*\) aligned exactly 1 time", linef):
+            re.match("\s+(\d+) \(.*\) aligned exactly 1 time", linef).groups()[0]
+        elif re.match("\s+(\d+) \(.*\) aligned >1 times", linef):
+            re.match("\s+(\d+) \(.*\) aligned >1 times", linef).groups()[0]
+        elif re.match(".*overall alignment rate", linef):
+            map_rate = re.match("(.*?)% overall alignment rate", linef).groups()[0]
 
-
-    print(f.read())
-    f.seek(0)
-    print(pattern.search(f.read()))
     f.close()
+    print(f"{f_name}\t{total_reads}\t{map_rate}")
 
 if __name__ == "__main__":
 
@@ -60,4 +60,5 @@ if __name__ == "__main__":
     pattern = re.compile(f"{sys.argv[1]}")
 
     for f in sys.argv[2:]:
-        parse_file(f)
+        f_name = pattern.match(f).groups()[0]
+        parse_file(f, f_name)

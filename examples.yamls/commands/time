@@ -1,0 +1,14 @@
+
+<<[32mtime[0m>>
+
+
+    /usr/bin/time --format='Real time: %e seconds\nUser time: %U seconds\nSystem time: %S seconds\nCPU usage: %P\nMax memory: %M KB\nExit status: %x' -o time_output.txt ls
+
+    %e 显示了程序从开始到结束的流逝时间（Real time），单位为秒。
+    %U 显示了程序在用户模式下消耗的CPU时间（User time），单位为秒。
+    %S 显示了程序在内核（系统）模式下消耗的CPU时间（System time），单位为秒。
+    %P 显示了CPU的使用百分比（CPU usage）。
+    %M 显示了程序使用的最大内存量（Max memory），单位为KB。
+    %x 显示了命令的退出状态（Exit status）。
+
+

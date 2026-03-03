@@ -2,6 +2,8 @@ library(dplyr)
 
 # 针对表中的数值类型，删除NA值大于cutoff的列，且使用中位数填充NA
 zy_fill_na_value <- function(in_matrix=NA, cutoff=1/4, del_na=TRUE, FUN = NA, margin='col',fill_value=FALSE){
+    # FUN   -> 记得不要忘了写如何处理NA，否则最后的结果可能和原来的一样
+    # del_na  -> 对于不满足的行/列是否要删除
     # cutoff -> 最多有多少比例的NA值
     # 只处理数值类型
     if(margin=='col'){

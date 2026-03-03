@@ -9,6 +9,7 @@
 '''
 Version : V3.0
 可以求分组的平均值
+按照下面的例子，name_1的数据首先除以2，然后再向group_1, group_4分别加和
 
 group: Must non header
     name_1  group_1     Group_A
@@ -31,11 +32,12 @@ from fractions import Fraction as frac
 def get_args():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-i", metavar="Matrix", required=True, help="Input matrix")
+    parser.add_argument("-t", metavar="Title", default=1, type=int,help="Whether have title [default: 1]")
     parser.add_argument("-g", metavar="group file", required=True, help="Input group")
     parser.add_argument("-V", metavar="Var col", default = 1, type=int, help="The ID's columns in group [default: 1]")
     parser.add_argument("-G", metavar="Group col", default = 2, type=int, help="The group's columns in group file [default: 2]")
     parser.add_argument("-o", metavar="output", required=True, help="Output matrix")
-    parser.add_argument("-s", required=False, type=int,  default=1, choices=[0,1,2,3], help="Split Str fo matrix and group.[default: 1] \033[31mThey must have similary split str\033[0m\n0 -> \\t\n1 -> \\s+\n2 -> |\n3 -> ,")
+    parser.add_argument("-s", required=False, type=int,  default=1, choices=[0,1,2,3], help="Split Str fo matrix and group.[default: 1] \033[31mThey must have similary split str\033[0m\n0 -> \\s+\n1 -> \\t\n2 -> |\n3 -> ,")
     args = parser.parse_args()
     return args
 
@@ -55,10 +57,18 @@ def parse_group(file_, GRP, sstr, V, G):
         GRP[line_split[V]] = {line_split[G]}
     f.close()
 
-def main(file_, sstr, output_file):
+def main(file_, sstr, output_file, title):
     result = {} 
-    f = open(file_, 'r')
-    tittle = f.readline()
+
+    if re.search(".gz$", file_):
+        f = gzip.open(file_, 'rt')
+    elif re.search(".bz2$", file_):
+        f = bz2.open(file_,'rt')
+    else:
+        f = open(file_, 'r')
+
+    if title:
+        tittle = f.readline()
 
     for line in f:
         line_split = re.split(sstr, line.strip())
@@ -79,7 +89,8 @@ def main(file_, sstr, output_file):
     f.close()
 
     with open(output_file, 'w', encoding="utf-8") as f:
-        f.write(tittle)
+        if title:
+            f.write(tittle)
         if sstr != "\|":
             sstr = "\t"
         for k,v in result.items():
@@ -93,13 +104,13 @@ def main(file_, sstr, output_file):
 if __name__ == "__main__":
     args = get_args()
     GRP = {}
-    sstr = {0:"\t", 1:"\s+", 2:"\|", 3:","}[args.s]
+    sstr = {0:"\s+", 1:"\t", 2:"\|", 3:","}[args.s]
     if args.V < 0 or args.G < 0:
         print("Plese check Your parameter -V -G, they must >= 1")
         exit(127)
     V = args.V - 1 
     G = args.G - 1 
     parse_group(args.g, GRP, sstr, V, G)
-    main(args.i, sstr, args.o)
+    main(args.i, sstr, args.o, args.t)
     if args.V == args.G:
         print("Your parameter -V -G are equal!!!")

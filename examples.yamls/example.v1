@@ -1,0 +1,42 @@
+#!/usr/bin/bash
+
+# 定义命令根目录
+
+SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+CMD_DIR="$SCRIPT_DIR/commands"
+
+# 打印命令内容
+print_command() {
+    local cmd="$1"
+    local found=0
+
+    # 遍历所有文件，查找匹配的命令名
+    while IFS= read -r -d '' file; do
+        if [[ $(basename "$file") == "$cmd" ]]; then
+            echo -e "\n=== Command: $cmd (路径: $CMD_DIR/$cmd) ==="
+            printf "%b\n\n\n" "$(<"$file")"
+            found=1
+            break
+        fi
+    done < <(find "$CMD_DIR" \( -type f -o -type l \)  -print0)
+
+    # 未找到时提示
+    [[ $found -eq 0 ]] && echo "Error: Command '$cmd' not found!" >&2
+}
+
+# 列出所有命令（可选）
+list_commands() {
+    echo -e "\nAvailable commands:"
+    echo "------------------"
+    find "$CMD_DIR" \( -type f -o -type l \) | sed "s|$CMD_DIR/||" | sort | xargs -I {} printf "\t%s\n" {}
+}
+
+# 主逻辑
+if [[ $# -eq 0 || "$1" == "-h" ]]; then
+    echo "Usage: $0 <command>   # 打印命令文档"
+    echo "       $0 list        # 列出所有命令"
+elif [[ "$1" == "list" ]]; then
+    list_commands
+else
+    print_command "$1"
+fi

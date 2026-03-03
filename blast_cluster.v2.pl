@@ -2,20 +2,36 @@
 use warnings;
 use strict;
 
-die "perl $0 [in.len.sort] [in.blast.cvg] [out.fasta] [%cvg] [%iden]\n" unless @ARGV == 5;
+die "perl $0 [in.len.sort] [in.blast.cvg[.gz]] [out] [%cvg] [%iden]\n" unless @ARGV == 5;
+
 my ($len, $in_f, $out_f, $cov, $iden) = @ARGV;
+
 die "Overlap In-Output...\n" if $in_f eq $out_f;
 ### print STDERR "Program $0 Start...\n";
 
 my $similar = $iden;
 my $coverage = $cov;
+my $IN;
+
+###
+sub myread {
+    my ($inf) = @_;
+    my $IN;
+    if ( $inf =~ /\.gz$/ ){ open $IN, "pigz -dc $inf | " or die $!; }
+    # if ( $inf =~ /\.gz$/ ){ open( $IN,"-|", "pigz -dc", "$inf") or die $!; }
+    elsif ($inf =~ /\.bz2$/){open $IN, "bunzip2 -dc $inf|" or die $!;}
+    else{open $IN, "$inf" or dir $!;};
+    return $IN;
+}
+
 
 ###
 my (@seq, %len, %info) = ();
 my $curr = 9999999;
 
-open IN, $len or die $!;
-while(<IN>){
+
+$IN = myread($len);
+while(<$IN>){
 	chomp;
 	my @s = split /\s+/;
 	
@@ -25,11 +41,11 @@ while(<IN>){
 	push @seq, $s[0];
 	$len{$s[0]} = $s[1];
 }
-close IN;
+close $IN;
 
-###
-open IN, $in_f or die $!;
-while(<IN>){
+
+$IN = myread($in_f);
+while(<$IN>){
 	chomp;
 	my @s = split /\s+/;
 	
@@ -41,7 +57,7 @@ while(<IN>){
 
 	push @{$info{$s[0]}}, $_;
 }
-close IN;
+close $IN;
 
 ###
 my %has = %len;

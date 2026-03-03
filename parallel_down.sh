@@ -35,7 +35,7 @@ while [ $? -ne 0 ]
 do
     $count+=1
     sleep 5
-    parallel -j ${threads} --retry-failed --joblog ${temp_dir}/parallel.log ;
+    parallel --verbose -j ${threads} --retry-failed --joblog ${temp_dir}/parallel.log ;
     if [ $count -lt 10 ];then
         echo "faild"
         echo "Log file: ${temp_dir}/parallel.log"

@@ -1,0 +1,27 @@
+
+<<[32mdrep3[0m>>
+
+    URL:		https://github.com/MrOlm/drep/releases
+    version:		drep3
+    conda env:		source activate /share/data1/software/miniconda3/envs/drep3
+    [31mcommom command:[0m	dRep  dereplicate <out_dir> -g <input_dir/*.fna> -p 28 -pa 0.9 -sa 0.95 -nc 0.3 --ignoreGenomeQuality  --S_algorithm fastANI --skip_plots
+    description:	Clustering genomes.
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+    
+    [32m●[0m	00.因为fastANI计算很慢，如果想要跳过fastANI,加入参数--SkipSeconda,但是，相应的，你应该将第一次聚类的阈值改为-pa修改为自己想要设定的阈值
+    dRep  dereplicate <out_dir> -g <input_dir/*.fna> -p 28 -pa 0.9 -sa 0.95 -nc 0.3 --ignoreGenomeQuality  --S_algorithm fastANI --skip_plots --SkipSeconda
+
+    [32m●[0m	1.解析聚类结果
+    less <out_dir>/data_tables/Cdb.csv | perl -e '<>;while(<>){chomp;@s=split /,/;$s[1]=~s/.fa$//;push @{$h{$s[0]}},$s[1];} for(keys %h){@a=@{$h{$_}};print "$_\\t".($#a+1)."\\t".(join ";",@a)."\\n";}' | msort -k rn2 > drep.clu.info
+
+    [32m●[0m	2.转换成长列表
+    less drep.clu.info | perl -e 'while(<>){chomp;@l=split/\s+/;@c=split(";",$l[-1]);$n++;print join("\\tclu_$n\\n",@c)."\\tclu_$n\\n"}' > drep.clu.long
+    
+    [32m●[0m	3.如果有ckm的结果，那么在簇中选一个Quality Score（Completeness - 5 * Contamination）最高的。
+    perl /share/data1/mengjx/bin/parse_dRep_cls.pl [Cdb.csv] [ckM_res] [out_f]
+    result: cls, N cls, representive bin, all bins.
+
+

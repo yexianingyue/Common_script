@@ -37,21 +37,21 @@ out_sorted = args$sorted
 threads = 10
 
 library(parallel, quietly = T)
-source("/share/data1/zhangy2/scripts/R_my_functions/zy_randomForest.R")
+source("/share/data1/zhangy2/scripts/R_my_functions/zy_randomForest.new.R")
 zy_parallel <- function(y){
     library(randomForest, quietly = T) # 这边导入时，不会打印信息
     # randomForest(x$rf_map$Group~., data=t(x$rf_dt),ntree=999,importance=TRUE, proximity=TRUE)$importance[,2]
-    randomForest(x$rf_map[,gid]~., data=t(x$rf_dt),ntree=999,importance=TRUE, proximity=TRUE)$importance[,2]
+    randomForest(x$rf_map[,gid]~., data=t(x$rf_dt),ntree=999,importance=TRUE, proximity=TRUE)$importance[,'MeanDecreaseAccuracy']
 }
 
 # read file
 ######################
 message("\n\n# read profile: ", in_f)
-dt = read.table(in_f, check.names=F, row.names=1, header=T, comment.char = "", sep="\t")
+dt = read.table(in_f, check.names=F, row.names=1, header=T, comment.char = "", sep="\t", quote="", fileEncoding = "UTF-8")
 message("----------\nprofile: ", ncol(dt), "  columns\t", nrow(dt), "  features.", "\n\n")
 
 message("# read group file: ", in_g)
-sample_map = read.table(in_g,header=T, check.names=F, sep="\t", comment.char = "")
+sample_map = read.table(in_g,header=T, check.names=F, sep="\t", comment.char = "", quote="", fileEncoding = "UTF-8")
 message("----------\ngroup file: ", nrow(sample_map), "\n\n")
 
 # ***** 格式化名字，如果有特殊字符，随机森岭会报错

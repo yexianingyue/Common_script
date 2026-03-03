@@ -1,0 +1,424 @@
+<html>
+    <link href="https://aps.unmc.edu/assets/css/foundation.css" rel="stylesheet" type="text/css" />
+    <link href="https://aps.unmc.edu/assets/css/content.css" rel="stylesheet" type="text/css" />
+    <link href="https://aps.unmc.edu/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <head>
+        <title>AMP Database Search</title>
+    </head>
+    <body>
+    <header>
+    <div class="row">
+        <div id="header-logo">
+            <a href="https://www.unmc.edu/">
+        <img alt="UNMC" id="mobile-image" src="https://www.unmc.edu/assets/img/logo-unmc-www2.png">
+      </a>
+    </div>  
+    </div>
+  <div id="main-navigation">
+    <div class="row">
+      <div class="columns" id="main-logo">
+            <a href="https://aps.unmc.edu/"> 
+            <p id="top" style="font-size: 1.8em; font-weight: 400;">APD3</p>
+          <p id="bottom" style="font-weight: 500; height: 24px; font-size: 1.3em;">Antimicrobial Peptide Database</p>
+        </a>
+            </div>
+    </div>
+    </div>
+    </header>
+<!-- Not yet implemented -->
+<row>
+    <div id="breadcrumb" class="small-12 medium-12 large-12 twelve columns">
+    </div>
+</row>
+<div class="row">
+    <div id="heading" class="small-12 medium-12 large-12 twelve columns">
+        AMP Database Search    </div>
+</div><div id="content" class="row"><div class="small-12 medium-3 large-3 three columns remove-left" id="left-navigation">    
+<ul class="mobile-nav">
+
+<ul>
+<li class="page">
+<a href="https://aps.unmc.edu/home"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Antimicrobial Peptide Database
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/about"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+About
+</a>
+</li>
+<li class="active page-active">
+<a href="https://aps.unmc.edu/database">
+AMP Database Search
+</a>
+</li><li class="page">
+<a href="https://aps.unmc.edu/prediction"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Antimicrobial Peptide Calculator and Predictor
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/design"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Antimicrobial Peptide Designer
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/statistic"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Statistical Information
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/links"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Related Databases & Prediction Websites
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/timeline"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+AMP Timeline
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/nomenclature"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Nomenclature of Antimicrobial Peptides
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/classification"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Classification of Antimicrobial Peptides
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/glossary"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Glossary
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/facts"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+AMP Facts
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/structure"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+3D Structure of Antimicrobial Peptides
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/tools"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Tools
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/opportunities"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Opportunities
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/conference"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Conference
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/ampantiviralnews"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+AMP Antiviral News
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/downloads"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Downloads
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/faq"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Frequently Asked Questions
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/contact"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+Contact
+</a>
+</li>
+<li class="page">
+<a href="https://aps.unmc.edu/new"\>
+<i class="fa fa-chevron-right show-for-small-only"></i>
+What's New
+</a>
+</li>
+</ul>
+
+
+
+</ul>
+</div><div id="body-area" class="small-12-medium-9 large-9 nine columns"><link href="https://aps.unmc.edu/assets/css/database.css" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+<h1 class="peptide">Antimicrobial Peptide AP00316</h1>
+
+<hr class="database_separator">
+
+<table width="100%" class="peptide">
+  <tr>
+    <td width="25%">
+      APD ID:
+    </td>
+    <td width="75%">
+      AP00316    </td>
+  </tr>
+  <tr>
+    <td>
+      Name/Class:
+    </td>
+    <td>
+      Uperin 2.1 (natural AMPs; UCLL1c; toad, amphibians,animals; XXA)    </td>
+  </tr>
+  <tr>
+    <td>
+      Source:
+    </td>
+    <td>
+      Floodplain toadlet <i>Uperoleia inundata</i>, Australia    </td>
+  </tr>
+  <tr>
+    <td>
+      Sequence:
+    </td>
+    <td>
+      <p class="peptide_sequence">GIVDFAKKVVGGIRNALGI</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Length:
+    </td>
+    <td>
+      19    </td>
+  </tr>
+  <tr>
+    <td>
+      Net charge:
+    </td>
+    <td>
+      3    </td>
+  </tr>
+  <tr>
+    <td>
+      Hydrophobic residue%:
+    </td>
+    <td>
+      52%
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Boman Index:
+    </td>
+    <td>
+      -0.04    </td>
+  </tr>
+  <tr>
+    <td>
+      3D Structure:
+    </td>
+    <td>
+        Unknown    </td>
+  </tr>
+  <tr>
+    <td>
+      Method:
+    </td>
+    <td>
+          </td>
+  </tr>
+  <tr>
+    <td>
+      SwissProt ID:
+    </td>
+    <td>
+      SwissProt ID: P82027 <a href="http://www.uniprot.org/uniprot/">Go to SwissProt </a>    </td>
+  </tr>
+  <tr>
+    <td>
+      Activity:
+    </td>
+    <td>
+      Anti-Gram+ & Gram-    </td>
+  </tr>
+  <tr>
+    <td>
+      Crucial residues:
+    </td>
+    <td>
+           </td>
+  </tr>
+  <tr>
+    <td>
+      Additional info:
+    </td>
+    <td>
+      Updated 3/2015.    </td>
+  </tr>
+  <tr>
+    <td>
+      Title:
+    </td>
+    <td>
+      Novel uperin peptides from the dorsal glands of the australian floodplain toadlet Uperoleia inundata.    </td>
+  </tr>
+  <tr>
+    <td>
+      Author:
+    </td>
+    <td>
+      Bradford AM, Raftery MJ, Bowie JH, Tyler MJ, Wallace JC, Adams GW, Severini C.1996, Australia    </td>
+  </tr>
+  <tr>
+    <td>
+      Reference:
+    </td>
+    <td>
+      Aust. J. Chem. 1996; 49:475-484. <a href="http://www.publish.csiro.au/paper/CH9960475">Publiser</a>    </td>
+  </tr>
+</table>
+</div></div><!--    <link href="https://aps.unmc.edu/assets/css/foundation.css" rel="stylesheet" type="text/css" />
+ -->
+<!--    <link href="https://aps.unmc.edu/assets/css/content.css" rel="stylesheet" type="text/css" />
+ -->
+<!--    <link href="https://aps.unmc.edu/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+ -->
+<footer>
+    <div class="row" id="top">
+        <div class="small-12 medium-4 large-4 four columns" id="breakthroughs">
+            <p>
+                <img alt="Breakthroughs for life." src="https://www.unmc.edu/assets/img/bg_tagline.png"/>
+                <br/>University of Nebraska Medical Center
+                <br/>42nd and Emile, Omaha, NE 68198
+                <br/>402-559-4000<span class="divider">|</span><a class="footer-link" href="//www.unmc.edu/contact/" target="">Contact Us</a>
+                
+            </p>
+        </div>
+        <div class="small-7 medium-3 large-3 three columns links first-links">
+            <span class="header">Explore UNMC.edu</span>
+            <ul>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/aboutus/index.html" target="">About Us</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/education/index.html" target="">Education</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/research/index.html" target="">Research</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/outreach/index.html" target="">Outreach</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/patientcare/index.html" target="">Patient Care</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/news/index.html" target="">News &amp; Events</a>
+                </li>
+            </ul>
+        </div>
+               <div class="small-5 medium-3 large-3 three columns links">
+            <span class="header">Quick Links</span>
+            <ul>
+                <li>
+                    <a class="footer-link" href="https://my8.unmc.edu/">Blackboard</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/canvas.html">Canvas</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://info.unmc.edu/">Intranet</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="http://365.unmc.edu/">E-mail</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://events.unmc.edu/">Calendar</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://myrecords.nebraska.edu/">MyRecords</a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.unmc.edu/library/">Library</a>
+                </li>
+            </ul>
+        </div>
+        <div class="small-12 medium-2 large-2 two columns social">
+            <span class="header">Follow Us</span>
+            <ul>
+                <li>
+                    <a class="footer-link" href="https://www.facebook.com/unmcedu" target="_blank" title="Facebook"><i class="fa fa-facebook">&#160;</i></a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://twitter.com/unmc" target="_blank" title="Twitter"><i class="fa fa-twitter">&#160;</i></a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://instagram.com/iamunmc" target="_blank" title="Instagram"><i class="fa fa-instagram">&#160;</i></a>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <a class="footer-link" href="https://www.youtube.com/user/UNMCEDU" target="_blank" title="YouTube"><i class="fa fa-youtube-play">&#160;</i></a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.flickr.com/photos/unmc/" target="_blank" title="Flickr"><i class="fa fa-flickr">&#160;</i></a>
+                </li>
+                <li>
+                    <a class="footer-link" href="https://www.linkedin.com/company/university-of-nebraska-medical-center" target="_blank" title="Linkedin"><i class="fa fa-linkedin">&#160;</i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="bottom">
+        <div class="row">
+            <div class="small-12 medium-2 large-2 two columns" id="footer-img">
+                <a href="http://www.unmc.edu" target="">
+                    <img alt="University of Nebraska Medical Center" src="https://www.unmc.edu/assets/img/logo-wordmark.png"/>
+                </a>
+            </div>
+            <div class="small-12 medium-10 large-10 ten columns">
+                <p>&#169; 2017 University of Nebraska Medical Center</p>
+            </div>
+            <div class="small-12 medium-10 large-10 ten columns remove-right" id="right">
+                <p>
+                    <a class="footer-link" href="https://wiki.unmc.edu/index.php?title=Computer_Use/Electronic_Information">University Computer Use Policy</a>
+                    <span class="divider">|</span>
+                    <a class="footer-link" href="https://nebraska.edu/site-information.html?redirect=true">Copyright Violations</a>
+                    <span class="divider">|</span>
+                    <a class="footer-link" href="//www.unmc.edu/hipaa/about/notice-privacy-practices.html">Notice of Privacy Practices</a>
+                    <span class="divider">|</span>
+                    <a class="footer-link" href="//www.unmc.edu/titleix/notice-nondiscrimination.html">Notice of Nondiscrimination</a>
+                    <span class="divider">|</span>
+                    <a class="footer-link" href="mailto:unmcwebmaster@unmc.edu">Comments</a>
+                    
+                </p>
+                    
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

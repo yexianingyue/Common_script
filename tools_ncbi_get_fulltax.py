@@ -3,7 +3,7 @@
 ##########################################################
 # Creater       :  夜下凝月
 # Created  date :  2021-03-05, 09:14:32
-# Modiffed date :  2023-05-19, 14:29:31
+# Modiffed date :  2021-03-05, 09:14:32
 ##########################################################
 
 '''
@@ -20,10 +20,6 @@
 
     taxid_list:
         当中包含了你要寻找的fulltaxon的taxid，可以来自于上面的，也可以是你关注的个别的tax id
-
-    自定义：
-        支持自定义输出，你只需要修改init_taxo和init_taid就可以，init_taxo就是输出是每个分类的前缀
-        init_taid就是来自于nodes.dmp当中的分类层级
 '''
 
 import sys
@@ -52,7 +48,9 @@ init_taxo = {
         "order": "o__",
         "family": 'f__',
         'genus': 'g__',
-        'species': 's__'
+        'species': 's__',
+        'serotype':'subtype__',
+        'subspecies':'subspecies__'
         }
 
 init_taid = {
@@ -63,7 +61,9 @@ init_taid = {
         "order": "",
         "family": '',
         'genus': '',
-        'species': ''
+        'species': '',
+        'serotype':'',
+        'subspecies':''
         }
 
 # read nodes.dmp

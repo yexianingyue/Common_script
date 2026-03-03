@@ -1,12 +1,21 @@
 #!/usr/bin/bash
+shopt -s expand_aliases
 
 set -e
 
 if [ $# -lt 4 ] || [ $# -gt 5 ];then
-    echo -e "example:"
-    echo -e "       $0 input.fasta 2000 ./output/out input.fq.gz"
-    echo -e "       $0 input.fasta 2000 ./output/out input.fq1.gz input.fq2.gz"
-    echo -e "  2000是对于input.fasta的过滤长度，如果为0，代表不过滤, 也可以是其他值"
+    echo -e "\n"
+    echo -e "\texample:"
+    echo -e "\t   For \e[33mSingle\e[0m sequencing:"
+    echo -e "\t       $0 <\e[32minput.fasta\e[0m> <\e[32m2000\e[0m> <\e[32m./output/out\e[0m> <\e[32minput.fq.gz\e[0m>"
+    echo -e "\n"
+    echo -e "\t   For \e[33mPaired\e[0m sequencing:"
+    echo -e "\t       $0 <\e[32minput.fasta\e[0m <\e[32m2000\e[0m> <\e[32m./output/out\e[0m> <\e[32minput.fq1.gz\e[0m> <\e[32minput.fq2.gz\e[0m>"
+    echo -e "\n"
+    echo -e "\t   Note:"
+    echo -e "\t       1、2000是对于input.fasta的过滤长度，如果为0，代表不过滤, 也可以是其他值"
+    echo -e "\t          宏基因组组装分箱建议2000， 单菌测序建议500"
+    echo -e "\n"
     exit 0
 fi
 
@@ -25,11 +34,11 @@ function check_out(){
     if [ -d $1 ] || [ -f $1 ];then
         echo "You should give me a prefix for the output, not the directory or file."
         exit 127
-    elif [[ $1 =~ "/" ]] || [ ! -d ${1%/*} ];then
+    elif [[ $1 =~ "/" ]] && [ ! -d ${1%/*} ];then
         echo "No such directory ${1%/*}"
         exit 127
     fi
-    elif [ -f ${1}.depth ];then
+    if [ -f ${1}.depth ];then
         echo "${1}.depth  already exists, no need to run it again."
         exit 127
     fi
@@ -37,10 +46,11 @@ function check_out(){
 
 # -----------------------
 # 软件
-BWA="/usr/local/bin/bwa"
-SAMTOOLS="/usr/local/bin/samtools"
-JGI="/usr/local/bin/jgi_summarize_bam_contig_depths"
-SEQKIT="/usr/local/bin/seqkit"
+alias bwa='/usr/local/bin/bwa'
+alias samtools='/usr/local/bin/samtools'
+alias JGI='/usr/local/bin/jgi_summarize_bam_contig_depths'
+alias seqkit='/usr/local/bin/seqkit'
+# alias gc_depth.stat.pl='perl /home/lish/bin/gc_depth.stat.pl'
 
 #--------------
 # 检查文件
@@ -53,8 +63,8 @@ check_in $1
 if [ $2 -ne 0 ];then
     fa="${out_f}.filter.fa.gz"
     echo "filter $1 : $2 :" > ${out_f}.run.log
-    echo "$SEQKIT seq -g -m $2 $1 -o $fa" >> ${out_f}.run.log
-    $SEQKIT seq -g -m $2 $1 -o $fa
+    echo "seqkit seq -g -m $2 $1 -o $fa" >> ${out_f}.run.log
+    seqkit seq -g -m $2 $1 -o $fa
 else
     fa=$1
 fi
@@ -64,8 +74,8 @@ fi
 # bwa 建库
 check_in $fa
 echo "run make bwa index:" >> ${out_f}.run.log
-echo "$BWA index -p  ${out_f}.bwa.index $fa" >> ${out_f}.run.log
-$BWA index -p ${out_f}.bwa.index $fa 
+echo "bwa index -p  ${out_f}.bwa.index $fa" >> ${out_f}.run.log
+bwa index -p ${out_f}.bwa.index $fa 
 
 
 # -------------
@@ -74,21 +84,28 @@ $BWA index -p ${out_f}.bwa.index $fa
 if [ $# -eq 2 ];then
     fq=$4
     check_in $fq
-    cmd="$BWA mem -t 30 ${out_f}.bwa.index $fq"
-    echo "run bwa:" >> ${out_f}.run.log
+    cmd="bwa mem -t 30 ${out_f}.bwa.index $fq"
+    echo "run bwa: $cmd" >> ${out_f}.run.log
 else
     fq1=$4
     fq2=$5
     check_in $fq1
     check_in $fq2
-    cmd="$BWA mem -t 30 ${out_f}.bwa.index $fq1 $fq2"
-    echo "run bwa:" >> ${out_f}.run.log
+    cmd="bwa mem -t 30 ${out_f}.bwa.index $fq1 $fq2"
+    echo "run bwa: $cmd" >> ${out_f}.run.log
 fi
 
-$cmd |\
-    $SAMTOOLS view -bS - -o ${out_f}.bam\
-    && $SAMTOOLS sort ${out_f}.bam -o ${out_f}.sort.bam -@ 30 \
-    && rm ${out_f}.bam \
-    && $JGI --outputDepth ${out_f}.depth ${out_f}.sort.bam \
-    && rm ${out_f}.bwa.index.* ${out_f}.sort.bam
+## mapping : ${out_f}.sam.ok
+( [ ! -f ${out_f}.sam.ok ] ) && { $cmd > ${out_f}.sam 2> ${out_f}.bwa.log  && touch ${out_f}.sam.ok || ! rm ${out_f}.sam || exit 127; }
+## sam to bam : ${out_f}.bam.ok
+( [ ! -f ${out_f}.bam.ok ] ) && { samtools view -bS ${out_f}.sam -o ${out_f}.bam -@ 30 && touch ${out_f}.bam.ok && rm ${out_f}.sam || ! rm ${out_f}.bam || exit 127 ; }
+## sort bam :  ${out_f}.sort.bam.ok
+( [ ! -f ${out_f}.sort.bam.ok ] ) && { samtools sort ${out_f}.bam -o ${out_f}.sort.bam -@ 30 && touch ${out_f}.sort.bam.ok && rm ${out_f}.bam || ! rm ${out_f}.sort.bam || exit 127; }
+## coverage
+( [ ! -f ${out_f}.depth.ok ] ) && { JGI --outputDepth ${out_f}.depth ${out_f}.sort.bam && touch ${out_f}.depth.ok || ! rm ${out_f}.depth || exit 127;}
+## remove tmp file
+( [ -f ${out_f}.depth.ok ] ) && { rm ${out_f}.sam.ok ${out_f}.bam.ok  ${out_f}.sort.bam.ok ${out_f}.depth.ok ${out_f}.sort.bam ${out_f}.bwa.index.* ${out_f}.run.log|| exit 127; }
+( [ -f ${out_f}.filter.gz ] ) && { rm ${out_f}.filter.gz || exit 127; }
 
+
+# gc_depth.stat.pl -r ../assem_spades/A702-92.scaffolds.fasta -d A702-92.sdep -o x.pdf

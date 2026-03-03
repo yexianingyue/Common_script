@@ -1,0 +1,51 @@
+channels:
+  - defaults
+show_channel_urls: true
+default_channels:
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/r
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/msys2
+custom_channels:
+  Paddle: https://mirrors.ustc.edu.cn/anaconda/cloud
+  auto: https://mirrors.ustc.edu.cn/anaconda/cloud
+  biobakery: https://mirrors.ustc.edu.cn/anaconda/cloud
+  bioconda: https://mirrors.ustc.edu.cn/anaconda/cloud
+  c4aarch64: https://mirrors.ustc.edu.cn/anaconda/cloud
+  caffe2: https://mirrors.ustc.edu.cn/anaconda/cloud
+  conda-forge: https://mirrors.ustc.edu.cn/anaconda/cloud
+  deepmodeling: https://mirrors.ustc.edu.cn/anaconda/cloud
+  dglteam: https://mirrors.ustc.edu.cn/anaconda/cloud
+  fastai: https://mirrors.ustc.edu.cn/anaconda/cloud
+  fermi: https://mirrors.ustc.edu.cn/anaconda/cloud
+  idaholab: https://mirrors.ustc.edu.cn/anaconda/cloud
+  intel: https://mirrors.ustc.edu.cn/anaconda/cloud
+  matsci: https://mirrors.ustc.edu.cn/anaconda/cloud
+  menpo: https://mirrors.ustc.edu.cn/anaconda/cloud
+  mordred-descriptor: https://mirrors.ustc.edu.cn/anaconda/cloud
+  msys2: https://mirrors.ustc.edu.cn/anaconda/cloud
+  numba: https://mirrors.ustc.edu.cn/anaconda/cloud
+  ohmeta: https://mirrors.ustc.edu.cn/anaconda/cloud
+  omnia: https://mirrors.ustc.edu.cn/anaconda/cloud
+  peterjc123: https://mirrors.ustc.edu.cn/anaconda/cloud
+  plotly: https://mirrors.ustc.edu.cn/anaconda/cloud
+  psi4: https://mirrors.ustc.edu.cn/anaconda/cloud
+  pytorch: https://mirrors.ustc.edu.cn/anaconda/cloud
+  pytorch-test: https://mirrors.ustc.edu.cn/anaconda/cloud
+  pytorch3d: https://mirrors.ustc.edu.cn/anaconda/cloud
+  pyviz: https://mirrors.ustc.edu.cn/anaconda/cloud
+  qiime2: https://mirrors.ustc.edu.cn/anaconda/cloud
+  rapidsai: https://mirrors.ustc.edu.cn/anaconda/cloud
+  rdkit: https://mirrors.ustc.edu.cn/anaconda/cloud
+  simpleitk: https://mirrors.ustc.edu.cn/anaconda/cloud
+  stackless: https://mirrors.ustc.edu.cn/anaconda/cloud
+  ursky: https://mirrors.ustc.edu.cn/anaconda/cloud
+ssl_verify: true
+
+envs_dirs:
+- /share/data1/zhangy2/conda/envs
+- /home/zhangy2/.conda/envs
+- /share/data1/software/miniconda3/envs
+pkgs_dirs:
+- /share/data1/zhangy2/conda/pkgs
+- /home/zhangy2/.conda/pkgs
+- /share/data1/software/miniconda3/pkgs

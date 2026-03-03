@@ -1,5 +1,5 @@
 #!/share/data1/software/miniconda3/bin/python
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ##########################################################
 # Creater       :  夜下凝月
 # Created  date :  2021-01-22, 15:43:55
@@ -40,7 +40,7 @@ def get_args():
     parser.add_argument('-a', metavar='NA', type=str, default="0", help='\033[31mHow to fill na values.[0:default]\033[0m')
     parser.add_argument("-suffix", type=str, required=True,help="file suffix")
     parser.add_argument("--skip", type=int, default=0, help="How many lines should be skipped.  \033[31mDon't appear with parameter -n\033[0m")
-    parser.add_argument("-s", required=False, type=int,  default=1, choices=[0,1,2,3], help="Split Str fo matrix and group.[default: 1] \033[31mThey must have similary split str\033[0m\n0 -> \\t\n1 -> \\s+\n2 -> |\n3 -> ,")
+    parser.add_argument("-s", required=False, type=int,  default=1, choices=[0,1,2,3], help="Split Str fo matrix and group.[default: 1] \033[31mThey must have similary split str\033[0m\n0 -> \\s+\n1 -> \\t\n2 -> |\n3 -> ,")
     args = parser.parse_args()
     return args
 
@@ -91,7 +91,8 @@ def parse_file(sstr, path, strain, position, result_dict, suffix, f_title, posit
         f_title -= 1
     for line in f:
         line_split = re.split(sstr, line.strip("\n"))
-        #line_split = re.split(r"\t", line.strip())
+
+        ## 分割行
         try:
             cazy_name, cazy_count = line_split[positions[0]-1], line_split[positions[1]-1]
         except:
@@ -99,6 +100,11 @@ def parse_file(sstr, path, strain, position, result_dict, suffix, f_title, posit
             sys.stderr.write(str(line_split))
             sys.stderr.write(f"\n\033[31mthe line only have {len(line_split)} columns\033[0m, \033[1;33mplease check your parameter -n and -v \033[1m\n")
             exit(0)
+
+        if cazy_name == "" or cazy_count == "":
+            sys.stderr.write(f"\nERROR: parser file {path}/{strain}{suffix}\n")
+            exit(0)
+        ## 存入字典
         try:
             result_dict[cazy_name][position] = cazy_count
         except:
@@ -159,7 +165,7 @@ if __name__ == "__main__":
     format_dict = {'int':int, 'float':float, 'fraction':fraction, 'str':str}
 
     filter_file(args.D, args.suffix, args.a)
-    sstr = {0:"\t", 1:"\s+", 2:"\|", 3:","}[args.s]
+    sstr = {0: "\s+", 1: "\t", 2: "\|", 3: ","}[args.s]
 
 
     format_function = format_dict[args.f]

@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from multiprocessing import shared_memory
+import logging
 from scipy import stats
 import numpy as np
 import pandas as pd
 import argparse
 import sys
 
+
+logging.basciConfig(level=logging.info, format="%(asctime)s - %(levelname)s - %(message)s")
 
 def main(in1, in2, out_f):
 
@@ -29,7 +34,10 @@ def main(in1, in2, out_f):
     f.write("name_a\tname_b\tcorr\tpvalue\n")
     for i in range(0,nrow1):
         for j in range(0,nrow2):
-            s = stats.pearsonr(dt1.iloc[i,:], dt2.iloc[j,:])
+            x = dt1.iloc[i,:]
+            y = dt2.iloc[j,:]
+            nas = np.logical_or(x.isna(), y.isna())
+            s = stats.pearsonr(x[~nas], y[~nas])
             temp_str = f"{otus1[i]}\t{otus2[j]}\t{s[0]}\t{s[1]}\n"
             f.write(temp_str)
     f.close()

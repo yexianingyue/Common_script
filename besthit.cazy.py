@@ -4,7 +4,7 @@ import re
 from fractions import Fraction as frac
 
 '''
-cazy注释结果，容易个菌注释到多个酶，则平均分配，保持总基因数不变
+cazy注释结果，如果一个蛋白注释到多个酶，则平均分配，保持总基因数不变
 '''
 
 
@@ -25,8 +25,10 @@ for line in f:
     count = 0
     al[line_split[0]] = 1
 
+    pattern = re.compile(r"(GT\d+|GH\d+|AA\d+|PL\d+|CE\d+|CBM\d+)")
+
     for h in hit[1:]:
-        if re.search("^[A-Za-z]+", h):
+        if pattern.match(h):
             count += 1
 
     for h in hit[1:count+1]:

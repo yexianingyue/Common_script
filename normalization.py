@@ -1,59 +1,86 @@
 #!/share/data1/software/miniconda3/bin/python
 import pandas as pd
 import numpy as np
+import argparse
 import sys
+from multiprocessing  import Process, Manager
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import logging
 
-"""
+__doc__ = """
 归一化profile， 抽平样本reads数目,抽平的reads数由脚本自己取最小值
 表中数据将被转为整数
+
+下个版本：
+    如果采样数据超过了原始数据的一般，那么使用掩码的方式，采样较小的，然后从原始数据剔除就可以
 """
-def check_args():
-    if sys.argv.__len__() > 5 or sys.argv.__len__() < 4 or '-h' in sys.argv or '--help' in sys.argv or '-help' in sys.argv:
-        print(f"{sys.argv[0]}  <profile>  <output> <seed> [minimum: default is auto]")
-        print("\033[31m<output> wile be overwritten\033[0m")
-        exit(192)
 
-def process():
-    stat=1
+def get_args():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("i", help="profile")
+    parser.add_argument("o", help="output")
+    parser.add_argument("-t", default=10, type=int, help="threads. (default:10)")
+    parser.add_argument("-seed", type=int, help="seed")
+    parser.add_argument("-min", default=None, type=int, help="min reads")
+    parser.add_argument("--delete", action='store_true', help="如果列和小于-min,是否删除")
+    args = parser.parse_args()
+    return args
 
-    in_file = sys.argv[1]
-    out_file = sys.argv[2]
-    seed = int(sys.argv[3])
-    args_len = len(sys.argv)
-
+def process(name, counts, label, Min_num, seed, results, delete=False):
     np.random.seed(seed)
+    if np.sum(counts) >= Min_num:
+        temp1 = np.random.choice(np.repeat(label, counts),Min_num, replace=False)
+        temp1 = pd.DataFrame(temp1)[0].value_counts()
+        temp1 = pd.DataFrame(temp1)
+        temp1.columns = [name]
+    elif delete:
+        return None
+    else:
+        temp1 = pd.DataFrame({name: counts}, index=label)
+    results.append(temp1)
 
-    #df = pd.read_csv(in_file, sep="\s+", index_col=0, header=0).astype(int)
-    df = pd.read_csv(in_file, sep="\t", index_col=0, header=0).astype(int)
 
-    try:
-        Min_num = int(sys.argv[4])
-    except:
-        print("You do not set the minimum value, it will be discovered by auto.")
+def main(args):
+    inf = args.i
+    outf = args.o
+    Min_num = args.min
+    seed = args.seed
+    delete = args.delete
+    num_process = args.t
+
+    logging.info(f"read file: {inf}")
+    df = pd.read_csv(inf, sep="\t", index_col=0, header=0).astype(int)
+    if not Min_num:
         Min_num = df.sum().min()
 
     col_names = df.columns
     INDEX = df.index
 
-    result_list = []
+    manager = Manager()
+    results = manager.list()
 
-    for i in col_names[0:]:
-        print(f"\rprocess sample {stat}: {i}\t\t", end="")
-        stat+=1
-        if args_len == 4 or df[i].sum() >= Min_num:
-            temp = np.array(df[i])
-            temp1 = np.random.choice(np.repeat(INDEX, temp),Min_num)
-            temp1 = pd.DataFrame(temp1)[0].value_counts()
-            temp1 = pd.DataFrame(temp1)
-            temp1.columns = [i]
-        else:
-            temp1 = pd.DataFrame(df[i])
-        result_list.append(temp1)
+    with ProcessPoolExecutor(max_workers=num_process) as executor:
+        futures = {executor.submit(process, sample, df[sample].values, INDEX, Min_num, seed, results, delete): sample for sample in col_names}
 
-    result = pd.concat(result_list, join='outer', axis=1).fillna(0).astype(int)
-    result.to_csv(out_file, sep="\t")
-    print(f"\nmin reads is {Min_num}")
+        completed_count = 0
+        for completed_future in as_completed(futures):
+            try:
+                completed_future.result()  # 确保任务完成
+
+                completed_count += 1
+                sys.stdout.write(f"\rprocessed: {completed_count}")
+                sys.stdout.flush()  # 刷新输出
+
+            except Exception as e:
+                logging.error(e)
+    print("")
+    result = pd.concat(results, join='outer', axis=1).fillna(0).astype(int)
+    result.to_csv(outf, sep="\t")
+
 
 if __name__ == "__main__":
-        check_args()
-        process()
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    args = get_args()
+    main(args)
+
+

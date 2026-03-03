@@ -11,10 +11,14 @@ import sys
 
 
 def match(i,model):
-    if model == 1:
-        temp = re.split("\s+",i.split("\t")[2],maxsplit=1)[0]
-    else:
+    if model == 0:
+        temp = re.split("\s+",i.split("\t")[2])[0]
+    elif model == 1:
+        temp = re.split("\s+",i.split("\t")[2])[1]
+    elif model == 2:
         temp = re.split("\s+",i.split("\t")[2])[2]
+    elif model == 3:
+        temp = re.split("\s+",i.split("\t")[2])[3]
     return str(temp)
 
 def parse_(file_, model):
@@ -23,6 +27,7 @@ def parse_(file_, model):
         name = com.search(file_).group(1)
     except:
         name = file_
+    tn = None
     f = open(file_, 'r')
     for i in f:
         if re.findall("Total number", i):
@@ -35,29 +40,32 @@ def parse_(file_, model):
             n9 = match(i, model)
         elif re.findall("Maximum",i):
             maxl = match(i, model)
+        elif re.findall("Average",i):
+            avg = match(i, model)
         elif re.findall("Minimum",i):
             minl = match(i, model)
         elif re.findall("GC",i):
             GC = match(i, model)
     f.close()
 
-    result = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}".format(name,tn,tl,n5,n9,maxl,minl,GC)
-    print(result)
+    if tn != None:
+        result = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}".format(name,tn,tl,n5,n9,maxl,minl,avg,GC)
+        print(result)
 
 if __name__ == "__main__":
 
-
     if sys.argv.__len__() == 1 or sys.argv[1] == "-h":
         print("example:")
-        print(f"{sys.argv[0]} <filter/origin> \"(.*).haha.youzi.so\"  *.haha.youzi.so")
+        print(f"{sys.argv[0]} \033[4m<flag>\033[0m \"(.*).haha.youzi.so\"  *.haha.youzi.so")
+        print(f"flag:\n\torigin_ctg\n\torigin_scaffold\n\tfilter_ctg\n\tfilter_scaffold")
         print(f"result:")
         print("as\t1234567")
         print("bs\t2345678")
         print("...")
         exit(0)
 
-    print("\t".join(("name", "totalNumber", "totalLength", "n50", "n90", "maxlen", "minlen", "GC%")))
-    f_dict={"origin":1, "filter":0}
+    print("\t".join(("name", "totalNumber", "totalLength", "n50", "n90", "maxlen", "minlen", "Average", "GC%")))
+    f_dict={"origin_ctg":0,"origin_scaffold":1,'filter_ctg':2,'filter_scaffold':3}
     for i in sys.argv[3:]:
         parse_(i.strip(),f_dict[sys.argv[1]])
 
