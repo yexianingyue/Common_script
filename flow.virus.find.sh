@@ -1,8 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 ##############################################
 #       焊死的参数，不然每次手动指定太麻烦了
 ##############################################
+
 env_ckv=/share/data1/zhangy2/conda/envs/ckv.1.0.3
 db_ckv=/share/data1/Database/checkv/v1.5/checkv-db-v1.5
 
@@ -21,8 +22,7 @@ bin_hmm=/usr/local/bin/hmmsearch
 
 bin_o1=/path/to/print_id_len.py
 bin_o2=prodigal-gv-parallel.py
-export PATH=$PATH:$bin_o1:$bin_o2
-
+export PATH=/share/data1/zhangy2/scripts/:$bin_o1:$bin_o2:$PATH
 
 
 # 初始化默认值
@@ -169,11 +169,21 @@ fi
 ## 跑ckv on raw
 flow.virus.ckv.sh ${output}.tmp/input_raw ${output}.tmp/st1.ckv --threads ${threads} --conda_env $env_ckv --db_path $db_ckv
 
-## 跑ckv on provieus
-flow.virus.ckv.sh ${output}.tmp/st1.ckv/proviruses.fna ${output}.tmp/st2.ckv --threads  ${threads} --conda_env $env_ckv --db_path $db_ckv
+nres=$(head ${output}.tmp/st1.ckv/virus.select.ckv | wc -l )
+if [ ${nres} -gt 1 ];then
+    cat ${output}.tmp/st1.ckv/virus.select.fna > ${output}.tmp/ckv.virus.fna
+fi
 
-## merge ckv results
-cat ${output}.tmp/st1.ckv/virus.select.fna  ${output}.tmp/st2.ckv/virus.select.fna > ${output}.tmp/ckv.virus.fna
+## 跑ckv on provieus [如果provirus有，才跑这一步]
+if [ $(stat -c "%s" ${output}.tmp/st1.ckv/proviruses.fna) -ne 0 ];then
+
+    flow.virus.ckv.sh ${output}.tmp/st1.ckv/proviruses.fna ${output}.tmp/st2.ckv --threads  ${threads} --conda_env $env_ckv --db_path $db_ckv
+    nres=$(head ${output}.tmp/st2.ckv/virus.select.ckv | wc -l )
+    if [ ${nres} -gt 1 ];then
+        cat ${output}.tmp/st2.ckv/virus.select.fna >> ${output}.tmp/ckv.virus.fna
+    fi
+fi
+
 ## 因为seqkit head会强行终端输出，所以无论怎么样，都会exit 141，因此这边强行跳过就可以
 nseq=$(seqkit seq -m $minlen ${output}.tmp/ckv.virus.fna | seqkit head -n 10 | seqkit seq -n | wc -l) || true
 
@@ -195,17 +205,18 @@ fi
 ## deepvirfinder
 if [[ $skip_deepvirfinder -ne 1 ]];then
     echo "extract DeepVirFinder inof"
-    flow.virus.dvf.sh ${output}.tmp/ckv.virus.fna ${output}.tmp/st4.dvf --threads 1 --conda_env ${env_dvf} --bin_path ${bin_dvf}
+    flow.virus.dvf.sh ${output}.tmp/ckv.virus.fna ${output}.tmp/st4.dvf --threads 8 --conda_env ${env_dvf} --bin_path ${bin_dvf}
 else
     echo "skip DeepVirFinder info"
 fi
 
-####################################################
-#               remove contaminations
 ## genomad
 flow.virus.genomad.sh ${output}.tmp/ckv.virus.fna ${output}.tmp/st5.genomad \
     --threads ${threads}  --conda_env ${env_genomad} --db_path ${db_genomad}
 
+
+####################################################
+#               remove contaminations
 ## busco
 prodigal-gv-parallel.py -t ${threads} -m -i ${output}.tmp/ckv.virus.fna -o /dev/null -q -a ${output}.tmp/ckv.virus.faa
 flow.virus.busco.sh ${output}.tmp/ckv.virus.faa ${output}.tmp/st6.busco \
@@ -214,7 +225,9 @@ rm  ${output}.tmp/ckv.virus.faa
 
 ## intergate
 echo "remove plasmid or virus with a high proportion of bacterial genes"
-cat $(find ${output}.tmp -name "need_rm") |  seqkit grep -v -f - -o ${output}.fna.gz ${output}.tmp/ckv.virus.fna
+cat $(find ${output}.tmp -name "virus.name") > ${output}.tmp/all.virus
+cat $(find ${output}.tmp -name "need_rm")  | grep -wvf - ${output}.tmp/all.virus |  seqkit grep -f - -o ${output}.fna.gz ${output}.tmp/ckv.virus.fna
+
 
 echo "predict genes use prodigal-gv"
 prodigal-gv-parallel.py -t ${threads} -m -q -i ${output}.fna.gz -o ${output}.gff -d ${output}.ffn -a ${output}.faa
@@ -224,7 +237,7 @@ echo "match checkv quality"
 head -n 1 ${output}.tmp/st1.ckv/quality_summary.tsv > ${output}.ckv
 cat $(find ${output}.tmp -name "virus.select.ckv") | grep -v miuvig_quality >> ${output}.ckv
 awk -F "\t" 'ARGIND==1{a[$1]=1;next};ARGIND==2{if($1 in a)print}' ${output}.fna.len ${output}.ckv > ${output}.ckv.tmp && mv ${output}.ckv.tmp ${output}.ckv
-grep "^>" ${output}.faa | perl -ne 'chomp; $_=~s/^>//; @l=split/ # /; $l[0]=~/(\S+)_\d+/; print "$1\t$l[0]\t$l[1]\t$l[2]\n"' > ${output}.faa.feature
+# grep "^>" ${output}.faa | perl -ne 'chomp; $_=~s/^>//; @l=split/ # /; $l[0]=~/(\S+)_\d+/; print "$1\t$l[0]\t$l[1]\t$l[2]\n"' > ${output}.faa.feature
 
 echo "match VIBRANT inof"
 if [[ $skip_virbrant -ne 1 ]];then

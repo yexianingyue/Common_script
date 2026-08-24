@@ -1,9 +1,0 @@
-
-<<[32mtRNA[0m>>
-
-    version:		v2.0.11
-    PATH:		/usr/local/bin/tRNAscan-SE
-    [31mcommon command:[0m	tRNAscan-SE -q -L -B -o <outf> <in fasta:nucl>
-    Description:	tRNA预测工具
-
-

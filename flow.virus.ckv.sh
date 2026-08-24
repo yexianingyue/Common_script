@@ -122,10 +122,11 @@ checkv end_to_end -d ${db_path} -t ${threads} ${input} ${output}
 
 echo "filter ckv results"
 ## 之前的过滤条件是尽可能的找到更多的病毒，现在主要是为了找到高质量病毒
-# grep -v "contig >1.5x longer than expected genome length" ${output}/quality_summary.tsv | awk '($3=="No"||$1=="contig_id") && !($7/($5+1e-16)>0.5 && ($6==0 || ($6>0 && $7/($6+1e-16)>5)))' > ${output}/virus.select.ckv
 head -n 1 ${output}/quality_summary.tsv > ${output}/virus.select.ckv
 grep -v "contig >1.5x longer than expected genome length" ${output}/quality_summary.tsv \
-    | awk -F "\t" '$3=="No" && ($9 == "High-quality" || $8=="Medium-quality")' >> ${output}/virus.select.ckv
+    | grep -v "indicate large duplication" \
+    | awk -F "\t" '($3=="No"||$1=="contig_id") && !($7/($5+1e-16)>0.5 && ($6==0 || ($6>0 && $7/($6+1e-16)>5)))'  \
+	| awk -F "\t" ' $3 == "No" && ( $9 == "High-quality" || $8=="Medium-quality")' >> ${output}/virus.select.ckv
 
 ### 如果过滤完，ckv结果为0，就退出，后续不做了
 nckv=$(cat ${output}/virus.select.ckv | wc -l)

@@ -233,10 +233,7 @@ close OT;
 
 `$Rdir -f ${out_f}.gc_depth.stat.R`;
 
-if ($node_f ne '') { `mv ${out_f}.gc_depth.stat.nodes $node_f` unless $node_f eq "${out_f}.gc_depth.stat.nodes";
-} else { `rm -f ${out_f}.gc_depth.stat.nodes`;
-}
-
+# if ($node_f ne '') { `mv ${out_f}.gc_depth.stat.nodes $node_f` unless $node_f eq "${out_f}.gc_depth.stat.nodes"; } else { `rm -f ${out_f}.gc_depth.stat.nodes`; }
 # `rm -f ${out_f}.gc_depth.stat.R`;
 
 print STDERR "Program End...\n";

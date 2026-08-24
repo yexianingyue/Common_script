@@ -95,7 +95,8 @@ fi
 
 
 if [ -f ${out_f}.bowtie.ok ];then
-    ${soft_mp} --bowtie2db "${mpa_db}" -x ${metaphlan_db} -t rel_ab_w_read_stats --nreads $tot_reads ${out_f}.temp.sam --input_type sam -o ${out_f}.profile \
+    echo ${mpa_db}
+    ${soft_mp} --bowtie2_build ${mpa_db} --db_dir ${mpa_db} --mapout ${out_f}.temp.mapout -x ${metaphlan_db} -t rel_ab_w_read_stats --nreads $tot_reads ${out_f}.temp.sam --input_type sam -o ${out_f}.profile \
         && mv ${out_f}.running ${out_f}.ok \
         && rm ${out_f}.bowtie.ok ${out_f}.temp.sam
 fi

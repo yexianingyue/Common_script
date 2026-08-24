@@ -12,9 +12,9 @@
     source activate /share/data1/software/miniconda3/envs/checkm2
 
     # 你可以给定参数-x 来指定后缀
-    checkm2 predict --quiet --threads 20 -o <output_dir> --database_path <db_file> --allmodels --input <input_dir> -x fa
+    checkm2 predict --tmpdir <output_dir.tmp> --quiet --threads 20 -o <output_dir> --database_path <db_file> --allmodels --input <input_dir> -x fa
 
     ## 你也可以直接给定输入的所有文件，这样可以输入多个不同后缀的文件
-    checkm2 predict --quiet --threads 20 -o <output_dir> --database_path <db_file> --allmodels --input <input_dir/*.fa> [<input_dir2/*.fasta>] 
+    checkm2 predict --tmpdir <output_dir.tmp> --quiet --threads 20 -o <output_dir> --database_path <db_file> --allmodels --input <input_dir/*.fa> [<input_dir2/*.fasta>] 
 
 

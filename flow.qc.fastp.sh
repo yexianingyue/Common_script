@@ -198,7 +198,6 @@ base_cmd=(fastp  -w "${threads}" -q 20 -u 30 -n 5 -y -Y 30  --trim_poly_g --trim
 
 if [ $paired == 1 ];then
     logging "mode:\tpaired" "$run_log"
-    logging "input:\t$fq1\t${fq2}" "$run_log"
     "${base_cmd[@]}" \
         -i $fq1 -I $fq2 \
         -o ${out}.1.fq.gz -O ${out}.2.fq.gz || run_error "run fastp"

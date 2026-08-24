@@ -164,12 +164,12 @@ def main():
 
 if __name__ == "__main__":
     if sys.stdin.isatty():
-        print("脚本接受标准输入或管道符输入")
+        print("\n脚本接受标准输入或管道符输入")
         print("标准错误输出是每个位点的深度.如果没有重定向，则不会输出")
-        print("标准输入:")
-        print(f"{sys.argv[0]} <samfile prefix [ >output ] [ 2> contig.pos.dep]")
-        print("管道符:")
-        print(f"cat samfile | {sys.argv[0]} prefix [ >output ] [ 2> contig.pos.dep ]")
+        print("\n标准输入:")
+        print(f"\t{sys.argv[0]} \033[32mprefix\033[0m < samfile [ >output ] [ 2> contig.pos.dep]")
+        print("\n管道符:")
+        print(f"\tcat samfile | {sys.argv[0]} \033[32mprefix\033[0m [ >output ] [ 2> contig.pos.dep ]\n")
         exit(0)
     main()
     # cProfile.run('main()')

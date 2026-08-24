@@ -7,14 +7,14 @@ if [ $# -lt 4 ] || [ $# -gt 5 ];then
     echo -e "\n"
     echo -e "\texample:"
     echo -e "\t   For \e[33mSingle\e[0m sequencing:"
-    echo -e "\t       $0 <\e[32minput.fasta\e[0m> <\e[32m2000\e[0m> <\e[32m./output/out\e[0m> <\e[32minput.fq.gz\e[0m>"
+    echo -e "\t       $0 <\e[32minput.fasta\e[0m> <\e[32m1000\e[0m> <\e[32m./output/out\e[0m> <\e[32minput.fq.gz\e[0m>"
     echo -e "\n"
     echo -e "\t   For \e[33mPaired\e[0m sequencing:"
-    echo -e "\t       $0 <\e[32minput.fasta\e[0m <\e[32m2000\e[0m> <\e[32m./output/out\e[0m> <\e[32minput.fq1.gz\e[0m> <\e[32minput.fq2.gz\e[0m>"
+    echo -e "\t       $0 <\e[32minput.fasta\e[0m <\e[32m1000\e[0m> <\e[32m./output/out\e[0m> <\e[32minput.fq1.gz\e[0m> <\e[32minput.fq2.gz\e[0m>"
     echo -e "\n"
     echo -e "\t   Note:"
-    echo -e "\t       1、2000是对于input.fasta的过滤长度，如果为0，代表不过滤, 也可以是其他值"
-    echo -e "\t          宏基因组组装分箱建议2000， 单菌测序建议500"
+    echo -e "\t       1、1000是对于input.fasta的过滤长度，如果为0，代表不过滤, 也可以是其他值"
+    echo -e "\t          宏基因组组装分箱建议1000， 单菌测序建议500. (是因为1000主要是为了捞回来16S序列)"
     echo -e "\n"
     exit 0
 fi

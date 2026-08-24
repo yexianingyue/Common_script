@@ -12,7 +12,7 @@ alias ls='/usr/bin/ls'
 alias exit='builtin exit'
 
 if [ $# -ne 7 ];then
-    echo -e "\n\t$0 <environment> <depth> <fasta> <path_output_prefix> <seed:2024> <minLengthContig:2000> <minLengthBin:200000>"
+    echo -e "\n\t$0 <environment> <depth> <fasta> <path_output_prefix> <seed:2024> <minLengthContig:1000> <minLengthBin:200000>"
     echo -e "\n\tenvironment:"
     echo -e "\n\t\thuman_gut/dog_gut/ocean/soil/cat_gut/human_oral/mouse_gut/pig_gut/built_environment/wastewater/chicken_caecum/global"
     echo -e "\n"

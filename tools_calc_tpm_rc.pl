@@ -40,7 +40,13 @@ if ( -z $lenf ){
 
 #--------------------------------
 #       get length
-open I, "$lenf" or die $!;
+
+if ( $lenf =~ /\.gz$/) {
+    open I, "pigz -dc $lenf|" or die $!;
+}else{
+    open I, "$lenf" or die $!;
+}
+
 my %len_h = ();
 print "Read flen\n";
 while(<I>){
@@ -52,12 +58,11 @@ close(I);
 
 #--------------------------------
 #       calc col sum
-
-open I, "$profile" or die $!;
-# my $title = readline I;
-# chomp($title);
-# my @tmp = split /\t/, $title;
-# my @col_sum = (0) * scalar @tmp;
+if ( $profile =~ /\.gz\$/) {
+    open I, "pigz -dc $profile|" or die $!;
+}else{
+    open I, "$profile" or die $!;
+}
 my ($col_sum, $x) = 0;
 $. = 0;
 

@@ -38,6 +38,29 @@ Note:
    2) This is a beta version program, I will glad to any suggestion by someone...
 
 USAGE
+
+## 文件名处理
+sub get_file_basename{
+    my ($file_path) = @_;
+    my @tmp_arr = split(/[\\|\/]+/,$file_path);
+    my $len = @tmp_arr;
+    if ($len >=2) {
+        return $tmp_arr[-1];
+    }else{
+        return $file_path;
+    }
+}
+
+sub get_file_name{
+    my ($file_path) = @_;
+    my $basename = get_file_basename($file_path);
+    my @tmp_arr = split(/\./,$basename);
+    my $len = @tmp_arr;
+    return $tmp_arr[0];
+}
+
+
+
 die $usage if @ARGV == 0 or $ARGV[0] =~ /^-h/;
 
 my $Rdir = "R";
@@ -61,6 +84,8 @@ GetOptions(
 	"x:i" => \$max_len,
 	"f:s" => \$format
 );
+
+my $title = &get_file_name($out_f);
 
 die "Reference file is need...\n" unless $ref_f ne "";
 die "Soapcoverage depth file is need...\n" unless $dep_f ne "";
@@ -218,6 +243,7 @@ axis(side=2,seq(0, depth.cutoff, depth.cutoff/10))
 
 xhist <- hist(data.gc[,1],breaks=100,plot=FALSE)
 yhist <- hist(data.gc[,2],breaks=100,plot=FALSE)
+title("$title")
 
 par(mar=c(0,3,1,1))
 barplot(xhist\$counts,space=0)

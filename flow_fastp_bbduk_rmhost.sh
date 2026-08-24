@@ -74,26 +74,28 @@ trap 'clean_tmp' SIGINT SIGTERM
 touch $out.running
 
 if [ $mode == "Single" ];then
-    if [ -f $out.clean_noost.1.fq.gz ];then
+    if [ -f $out.clean_nohost.1.fq.gz ];then
         echo "The file already exists, checking integrity. $out.clean_nohost.fq.gz"
         { pigz -t $out.clean_nohost.fq.gz \
             && [[ `stat --format="%s" $out.clean_nohost.fq.gz` -ne 20 ]] \
             && echo "Done" >&2; } \
             && exit 0 \
             || echo "file is incomplete. rerun"
-    elif [ -f $out.clean_noost.1.fq.gz ] && [ -f $out.clean_nohost.2.fq.gz ];then
+    elif [ -f $out.clean_nohost.1.fq.gz ] && [ -f $out.clean_nohost.2.fq.gz ];then
         echo "The file already exists, checking integrity. $out.clean_nohost.1.fq.gz $out.clean_nohost.2.fq.gz"
         { pigz -t $out.clean_nohost.1.fq.gz $out.clean_nohost.2.fq.gz && [[ `stat --format="%s" $out.clean_nohost.1.fq.gz` -ne 20 ]] \
           && [[ `stat --format="%s" $out.clean_nohost.2.fq.gz` -ne 20 ]] && echo "Done" >&2; } \
             || echo "file is incomplete. rerun"
     fi
 fi
+start_time=`date "+%Y-%m-%d: %H:%M:%S"`
+echo -e "start time:\t$start_time"
 echo -e "\nMode:\t${mode}\n"
 echo -e "nReads:\t${nreads} -> [0 means process all reads.]\n"
 echo -e "input:\t${fq1}\n\t${fq2}\n"
 echo -e "outputdir:\t${out%/*}\n"
 
-echo "Remove low quality using fastp"
+echo -e "Remove low quality using fastp\tat time:`date "+%Y-%m-%d: %H:%M:%S"`"
 # if [ ! -f $out.fastp.log ] || [[ `grep ', time used: ' $out.fastp.log| wc -l` -ne 1 ]];then
 if [ ! -f $out.fastp.ok ];then
     if [ $mode == "Single" ];then
@@ -113,7 +115,7 @@ fi
 touch $out.fastp.ok
 
 
-echo "Remove low complexity using bbduk.sh"
+echo -e "Remove low complexity using bbduk.sh\tat time:`date "+%Y-%m-%d: %H:%M:%S"`"
 
 # if [ ! -f $out.bbduk.log ] || [[ `grep 'Bases Processed:' $out.bbduk.log | wc -l ` -ne 1 ]];then
 if [ ! -f $out.bbduk.ok ] && [ -f $out.fastp.ok ];then
@@ -134,7 +136,7 @@ fi
 touch $out.bbduk.ok
 
 
-echo "Remove phi174 reads using bowtie2"
+echo -e "Remove phi174 reads using bowtie2\tat time:`date "+%Y-%m-%d: %H:%M:%S"`"
 
 if [ ! -f $out.no_phi174.ok ] && [ -f $out.bbduk.ok ];then
     if [ $mode == "Single" ];then
@@ -154,7 +156,7 @@ touch $out.no_phi174.ok
 
 
 
-echo "Remove host reads using bowtie2"
+echo -e "Remove host reads using bowtie2\tat time:`date "+%Y-%m-%d: %H:%M:%S"`"
 # if [ ! -f $out.nohost.log ] || [[ `grep '% overall alignment rate' $out.nohost.log | wc -l` -ne 1 ]];then
 if [ ! -f $out.nohost.ok ] && [ -f $out.no_phi174.ok ];then
     if [ $mode == "Single" ];then
@@ -173,6 +175,8 @@ if [ ! -f $out.nohost.ok ] && [ -f $out.no_phi174.ok ];then
     fi
 fi
 touch $out.nohost.ok
+end_time=`date "+%Y-%m-%d: %H:%M:%S"`
+echo -e "end time:\t$end_time"
 
 rm $out.nohost.ok $out.fastp.ok $out.bbduk.ok $out.no_phi174.ok
 

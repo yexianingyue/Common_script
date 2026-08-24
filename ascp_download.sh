@@ -44,7 +44,7 @@ fi
 
 ### default
 KEY=/share/data1/software/miniconda3/envs/aspera/etc/asperaweb_id_dsa.openssh
-ASCP="/share/data1/software/miniconda3/envs/aspera/bin/ascp -L - -P 33001 -v -Q -Tr -k 2 -l 400m --mode recv "
+ASCP="/share/data1/software/miniconda3/envs/aspera/bin/ascp -L - -P 33001 -v -Q -Tr -k 2 -l 1000m --mode recv "
 
 ### EBI
 user_ebi="era-fasp"

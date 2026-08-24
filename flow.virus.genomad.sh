@@ -6,6 +6,7 @@
 threads=8
 conda_env="/share/data2/guorc/Software/conda/genomad.v1.11.1"
 db_path="/share/data1/Database/geNomad/genomad_db"
+
 force=0 # 是否强制重跑
 clean=0 # 是删除临时文件
 
@@ -123,8 +124,11 @@ set -u
 echo "Run geNomad"
 genomad end-to-end --threads ${threads} --disable-find-proviruses --cleanup ${input} ${output} ${db_path}
 
+echo "extract virus name"
+cut -f 1 $(find ${output} -name "*_virus_summary.tsv") > ${output}/virus.name
+
 echo "Remove plasmid sequences"
-cat $(find ${output}/*aggregated_classification/ -name "*.tsv") | tail -n +2 | awk -F "\t" '$3>0.7' | grep -v chromosome_score > ${output}/need_rm
+cat $(find ${output}/*aggregated_classification/ -name "*.tsv") | grep -v chromosome_score | awk -F "\t" '$3>0.7' > ${output}/need_rm
 
 tmp_dir="$(find ${output} -maxdepth 1 -name '*classification*')"
 rm -rf ${output}.lock && clean_dir $clean "${tmp_dir}" && touch ${output}.ok

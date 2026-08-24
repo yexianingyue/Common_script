@@ -1,9 +1,0 @@
-#!/usr/bin/bash
-if [[ $# -lt 1 ]];then
-    echo ""
-    echo -e "\t\tUsage:\t$0 fastp.log"
-    echo ""
-    exit 0
-fi
-
-perl -e 'open I, "$ARGV[0]";while(<I>){chomp;if($_=~/^Read1 before filtering:/){$stat=1;next};if($stat==1){if($_=~/total reads: (\d+)/){$r1=$1};if($_=~/Q20 bases: \d+\((.*)\)/){$q20=$1};if($_=~/Q30 bases: \d+\((.*)\)/){ $q30=$1;$stat=0; next}};if($_=~/^Read1 after filtering:/){$stat=2;next}; if($stat==2){if($_=~/total reads: (\d+)/){$r1a=$1; $rate=$r1a/$r1*100}elsif($_=~/Q20 bases: \d+\((.*)\)/){$q20a=$1;next}elsif($_=~/Q30 bases: \d+\((.*)\)/){$q30a=$1;print "$ARGV[0]\t$r1\t$r1a\t$rate\t$q20a\t$q30a\n";last} }}' $1

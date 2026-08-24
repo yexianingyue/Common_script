@@ -22,6 +22,7 @@ humann3 --threads 8 \
     --output $out\
     --memory-use maximum\
     --search-mode uniref50\
+    --metaphlan-options "-x mpa_v30_CHOCOPhlAn_201901" \
     --nucleotide-identity-threshold 90
 
 if [ -f $out/${prefix}.temp_pathabundance.tsv ];

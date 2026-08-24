@@ -133,9 +133,9 @@ fi
 
 exec > >(tee ${out}.run.log) 2> >(tee ${out}.run.err >&2)
 
-echo -e "method:\t$method"
-echo -e "minlen:\t$minlen"
+echo -e "$method:\t$minlen"
 echo -e "factor:\t$factor"
+echo -e "minlen:\t$mlen"
 
 base_cmd="fastp  -w ${threads} -q 20 -u 30 -n 5 -y -Y 30  --trim_poly_g --trim_poly_x -j /dev/null -h /dev/null -l $mlen "
 

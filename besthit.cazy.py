@@ -41,4 +41,4 @@ for line in f:
 f.close()
 
 for k,v in result.items():
-    print(f"{k}\t{v}")
+    print(f"{k}\t{v}\t{float(v)}")
