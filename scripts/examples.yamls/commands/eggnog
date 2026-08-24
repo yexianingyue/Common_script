@@ -1,0 +1,15 @@
+
+<<[32meggnog[0m>>
+
+    version:		v2.1.12
+    avaliable database:	/share/data1/Database/eggnog/
+    conda env:		source activate /share/data1/zhangy2/conda/envs/eggnog
+    [31mcommon command:[0m	emapper.py -i  <input.faa> --output <output_file> --data_dir /share/data1/Database/eggnog/
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+    1、一般的默认注释参数：
+    emapper.py --cpu 80 --data_dir /share/data1/Database/eggnog/  --output <output_file> -i  <input.faa> --temp_dir . --query_cover 50 --score 60
+
+

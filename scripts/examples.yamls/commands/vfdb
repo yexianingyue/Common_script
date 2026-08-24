@@ -1,0 +1,21 @@
+
+<<\e[32m vfdb \e[0m>>
+
+    version:		v.20250922
+    avaliable database:	/share/data1/Database/VFDB/VFDB_setB.latest.dmnd
+
+    ----------------------------
+         << 相关命令 >>
+    ----------------------------
+
+    diamond blastp --outfmt 6 --id 90 --subject-cover 80 -q <\e[32minput.faa\e[0m> -d /share/data1/Database/VFDB/VFDB_setB.latest.dmnd -o <\e[32moutput\e[0m>
+
+
+    ----------------------------
+    \e[33mdatabase-cite\e[0m:
+        \e[37mVFDB 2025: an integrated resource for exploring anti-virulence compounds
+
+    \e[33mparams-cite\e[0m:
+        \e[37mhttps://www.nature.com/articles/s41467-023-36633-7#Sec18
+        90% identity over 80% subject coverage as thresholds for diamond blastp
+

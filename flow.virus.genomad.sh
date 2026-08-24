@@ -124,7 +124,7 @@ echo "Run geNomad"
 genomad end-to-end --threads ${threads} --disable-find-proviruses --cleanup ${input} ${output} ${db_path}
 
 echo "Remove plasmid sequences"
-cut -f 1 $(find ${output} -name "*_plasmid_summary.tsv") | tail -n +2 > ${output}/need_rm
+cat $(find ${output}/*aggregated_classification/ -name "*.tsv") | tail -n +2 | awk -F "\t" '$3>0.7' | grep -v chromosome_score > ${output}/need_rm
 
 tmp_dir="$(find ${output} -maxdepth 1 -name '*classification*')"
 rm -rf ${output}.lock && clean_dir $clean "${tmp_dir}" && touch ${output}.ok

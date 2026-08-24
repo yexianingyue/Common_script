@@ -25,18 +25,19 @@ for line in f:
     count = 0
     al[line_split[0]] = 1
 
-    pattern = re.compile(r"(GT\d+|GH\d+|AA\d+|PL\d+|CE\d+|CBM\d+)")
+    pattern = re.compile(r"^(GT\d+|GH\d+|AA\d+|PL\d+|CE\d+|CBM\d+)")
 
     for h in hit[1:]:
         if pattern.match(h):
             count += 1
 
-    for h in hit[1:count+1]:
-        m = f"1/{count}"
-        if result.get(h):
-            result[h] += frac(m)
-        else:
-            result[h] = frac(m)
+    for h in hit[1:]:
+        if pattern.match(h):
+            m = f"1/{count}"
+            if result.get(h):
+                result[h] += frac(m)
+            else:
+                result[h] = frac(m)
 f.close()
 
 for k,v in result.items():

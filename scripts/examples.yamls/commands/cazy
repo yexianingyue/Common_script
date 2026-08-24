@@ -1,0 +1,13 @@
+
+<<[32mcazy[0m>>
+
+    version:		v.0
+    avaliable database:	/share/data1/Database/cazy/CAZyDB.07142024.dmnd
+    conda env:		test
+    [31mcommon command:[0m	diamond blastp --outfmt 6 --db /share/data1/Database/cazy/CAZyDB.07142024.dmnd -o <output_file> --quiet --query <input.faa> --query-cover 50 --min-score 60 -p 80
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+
+

@@ -1,0 +1,24 @@
+
+<<[32mdiamond[0m>>
+
+    version:		v2.0.13
+    ----------------------------
+         << 相关命令 >>
+    ----------------------------
+    ## 1.帮助文档
+    diamond help
+
+    ## 2.建库(建立索引)
+    diamond makedb --in <fasta> --db <prefix>
+
+    ## 3.蛋白序列比对
+    diamond blastp --outfmt 6 --db <db.dmnd> -o <out.btp> --quiet  --query <in.fasta> --query-cover 50 --subject-cover 50 --id 30 -p 8
+
+    ## 4.核酸比对蛋白
+    NOTE: 对于每一条序列，blaxtx会翻译出6条蛋白序列(正反序列各三条)
+    diamond blastx --outfmt 6 --db <db.dmnd> -o <out.btp> --quiet  --query <in.fasta> --query-cover 50 --subject-cover 50 --id 30 -p 8
+
+    ## 5.将数据库转为faa序列
+    diamond getseq -d <db.dmnd> | head
+
+

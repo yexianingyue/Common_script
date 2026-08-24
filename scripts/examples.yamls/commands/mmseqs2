@@ -1,0 +1,21 @@
+
+<<[32mmmseqs2[0m>>
+
+    URL:		https://github.com/soedinglab/MMseqs2
+    version:		mmseqs2.17
+    conda env:		source activate /share/data1/zhangy2/conda/envs/mmseqs2.17
+    [31mcommom command:[0m	mmseqs easy-cluster <input> <out_prefix> <temp_dir> --min-seq-id 0.5 --cov-mode 1 -c 0.9 --cluster-mode 2 --cluster-reassign 1 --kmer-per-seq 200 --kmer-per-seq-scale 0.8 --threads 32 --compressed 1
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+    ## 长列表转宽列表
+    less all.clu_cluster.tsv | perl -e 'while(<>){chomp;@s=split/\s+/;push @{$h{$s[0]}},$s[1];} for(keys %h){@a=@{$h{$_}}; print "$_\\t".($#a+1)."\\t".(join",", @a)."\\n";}' > all.clu_cluster.tsv.f
+
+    description:	Clustering gene[nucl,prot]
+
+    ## 使用mmseqs进行序列比对
+    ### 1、建库
+    mmseqs createdb input.fa [input.fa2 input.fa3 ... ] votu.db
+
+

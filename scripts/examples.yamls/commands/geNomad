@@ -1,0 +1,10 @@
+
+<<[32mgeNomad[0m>>
+
+    version:		1.11.1
+    avaliable database:	/share/data1/Database/geNomad/genomad_db
+    conda env:		source activate /share/data2/guorc/Software/conda/genomad.v1.11.1
+    cite:		10.1038/s41587-023-01953-y
+    [31mcommon command:[0m	genomad end-to-end --threads 80 --cleanup <input_fasta> <output_dir> <database>
+
+

@@ -1,0 +1,22 @@
+
+<<[32mgtdbtk[0m>>
+
+    version:		v2.3.2
+    avaliable database:	/share/data1/Database/gtdbtk-214/release214/
+    conda env:		source activate /share/data1/zhangy2/conda/envs/gtdbtk
+    [31mcommon command:[0m	export GTDBTK_DATA_PATH=/share/data1/Database/gtdbtk-214/release214 && gtdbtk classify_wf --cpus 80 --skip_ani_screen --genome_dir <input_dir> --out_dir <output_dir> -x <suffix_of_input_genome[fa,fna,...]>
+
+    ----------------------------
+         << 其他相关命令 >>
+    ----------------------------
+    ## 1.列表
+
+    gtdbtk classify_wf --cpus 80 --skip_ani_screen --batchfile <input_table> --out_dir <output_dir>
+
+    用户可以输入基因组列表以运行gtdbtk，列表格式如下,使用tab分割：
+    /path/to/genome1.fna.gz	genome1
+    /path/to/genome2.fna	genome2
+    /path/to/genome3.fa.gz	genome3
+    /path/to/genome4.fa	genome4
+
+

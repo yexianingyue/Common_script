@@ -1,0 +1,7 @@
+/home/zhangy2/.aspera/connect/bin/ascp -P 33001 -i /home/zhangy2/.aspera/connect/etc/asperaweb_id_dsa.openssh -k 1 -Tr -l 100m anonftp@ftp.ncbi.nlm.nih.gov:/blast/db/FASTA/nt.gz ./
+
+/home/zhangy2/.aspera/connect/bin/ascp -P 33001 -v -Q -Tr -k 1 -l 100m -i /home/zhangy2/.aspera/connect/etc/asperaweb_id_dsa.openssh --mode recv --host ftp.ncbi.nlm.nih.gov --user anonftp --file-list list.txt ./
+
+/home/zhangy2/.aspera/connect/bin/ascp -P 33001 -v -Q -Tr -P 33001 -k 1 -l 100m -i /home/zhangy2/.aspera/connect/etc/asperaweb_id_dsa.openssh --mode recv --host fasp.sra.ebi.ac.uk --user era-fasp --file-list list.txt ./
+# -P(ort)
+# -Q

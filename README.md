@@ -1,3 +1,23 @@
+## 202604
+
+### 改
+1. besthist.cazy.py  
+2. flow_fastp.sh ## 自动过滤长度  
+3. flow.virus.genomad.sh ## 质粒鉴定结果  
+4. flow.qc.fastp.sh  ## 将flow_fastp.sh重构  
+5. 修改了PCoA，使其默认正方形
+
+
+### 增
+1. flow_fastspar.sh  ## sparcc的脚本，只不过提供的表格需要提前生成好  
+2. flow.qc.rmhost.sh ## 使用bowtie2去宿主，主要是可以根据测试的map rate来自动选择是否去宿主
+3. tools_get_identity_from_samfile.py ## 获取sam文件中，比对的相似度
+
+
+
+> 修复bug
+
+
 # 常用脚本备份
 
 ```

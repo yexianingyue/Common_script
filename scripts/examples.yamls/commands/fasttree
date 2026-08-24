@@ -1,0 +1,9 @@
+
+<<\e[32m fasttree \e[0m>>
+
+    ## fastree是单线程的，速度比较慢
+    /usr/local/bin/fasttree  < protein_alignment > tree
+
+    ## 使用多线程代替它
+    /share/data1/software/shared_bin/FastTreeMP
+
